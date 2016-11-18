@@ -1,62 +1,22 @@
-# Python implementation of an ABIF file reader according to Applied Biosystems' specificatons,
-# see http://www.appliedbiosystems.com/support/software_community/ABIF_File_Format.pdf
-#
-# This code is published by Interactive Biosoftware, France,
-# see http://www.interactive-biosoftware.com/
-# under LGPL license,
-# see http://www.gnu.org/licenses/lgpl-3.0.en.html
-#
-# Author: Francis Wolinski
-# Version: 1.0.1, October 2013
-# Copyright (c) Francis Wolinski 2007-2013
-#
-# User Manual
-#
-# Conversion of ABIF data types to Python types (see struct.unpack(fmt, string) method):
-# Unpack the string (presumably packed by pack(fmt, ...)) according to the given format. The result is a tuple even if
-# it contains exactly one item. The string must contain exactly the amount of data required by the format (len(string)
-# must equal calcsize(fmt))
-
-# type 1 = byte -> integer
-# type 2 = char -> string
-# type 3 = word -> long
-# type 4 = short -> integer
-# type 5 = long -> integer
-# type 7 = float -> float
-# type 8 = double -> float
-# type 10 = date -> datetime.date instance
-# type 11 = time -> datetime.time instance
-# type 12 = thumb -> tuple
-# type 13 = bool -> True or False
-# type 18 = pString -> string
-# type 19 = cString -> string
-# type = 1024+ = user -> NotImplemented: to be overwritten in user's code in ABIFReader.readNextUserData method
-# type = other -> NotImplemented
-#
-# from ABIFReader import *
-# reader = ABIFReader(<filename>) # creates an instance of ABIFReader
-# reader.version # version of ABIF file
-# reader.showEntries() # print all entries of ABIF file "<name> (<num>) / <type> (<size>)"
-# data = reader.getData(<name>[, <num>]) # read data for entry named <name> with number <num>, by default <num> is 1
-# reader.close() # close the file, since it is kept open
-#
 
 import struct
 import datetime
 
-ABIF_TYPES = {1: 'byte', 2: 'char', 3: 'word', 4: 'short', 5: 'long', 7: 'float', 8: 'double', 10: 'date', 11: 'time', 12: 'thumb', 13: 'bool', 18: 'pString', 19: 'cString'}
+from ABIFReader import *
 
-
-class ABIFReader:
+class SG1_Reader:
+    """
+    Class to read SG1 binary files.
+    Has similar structure to that of an FSA file.
+    """
     def __init__(self, fn):
         self.filename = fn
         self.file = open(fn, 'rb')
         self.type = self.readNextString(4)
-        if self.type != 'ABIF':
+        if self.type != 'SG1F':
             self.close()
-            raise SystemExit("error: No ABIF file '%s'" % fn)
+            raise SystemExit("error: No SG1F file '%s'" % fn)
         self.version = self.readNextShort()
-        print self.version
         dir = DirEntry(self)
         self.seek(dir.dataoffset)
         self.entries = [DirEntry(self) for i in range(dir.numelements)]
@@ -179,7 +139,6 @@ class ABIFReader:
         :param nb: number of bytes
         :return:
         """
-        # self.file.read(nb) = string
         x = struct.unpack(format, self.file.read(nb))
         return x[0]
 
@@ -191,47 +150,3 @@ class ABIFReader:
 
     def tell(self):
         return self.file.tell()
-
-"""
-The next 28 bytes comprise a single directory entry structure that points to the directory. A directory entry is a packed structure (no padding bytes) of the following form:
-struct DirEntry{
-  SInt32 name;
-  SInt32 number;
-  SInt16 elementtype;
-  SInt16 elementsize;
-  SInt32 numelements;
-  SInt32 datasize;
-  SInt32 dataoffset;
-  SInt32 datahandle;
-//tag name
-//tag number
-//element type code
-//size in bytes of one element //number of elements in item //size in bytes of item //item's data, or offset in file //reserved
-}
-"""
-class DirEntry:
-    def __init__(self, reader):
-        self.name = reader.readNextString(4)        # tag name
-        self.number = reader.readNextInt()          # tag number
-        self.elementtype = reader.readNextShort()   # element type code
-        self.elementsize = reader.readNextShort()   # size in bytes of one element
-        self.numelements = reader.readNextInt()     # number of elements in item
-        self.datasize = reader.readNextInt()        # size in bytes of item
-        self.dataoffsetpos = reader.tell()
-        self.dataoffset = reader.readNextInt()      # item's data, or offset in file
-        self.datahandle = reader.readNextInt()      # reserved
-
-    def __str__(self):
-        return "%s (%i) / %s (%i)" % (self.name, self.number, self.mytype(), self.numelements)
-
-    def mydataoffset(self):
-        if self.datasize <= 4:
-            return self.dataoffsetpos
-        else:
-            return self.dataoffset
-
-    def mytype(self):
-        if self.elementtype < 1024:
-            return ABIF_TYPES.get(self.elementtype, 'unknown')
-        else:
-            return 'user'
