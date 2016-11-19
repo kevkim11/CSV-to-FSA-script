@@ -4,6 +4,9 @@ import datetime
 
 from ABIFReader import *
 
+from DirEntry import *
+
+
 class SG1_Reader:
     """
     Class to read SG1 binary files.
@@ -19,7 +22,10 @@ class SG1_Reader:
         self.version = self.readNextShort()
         dir = DirEntry(self)
         self.seek(dir.dataoffset)
-        self.entries = [DirEntry(self) for i in range(dir.numelements)]
+        # self.entries = [DirEntry(self) for i in range(dir.numelements)]
+        self.entries = []
+        for i in range(dir.numelements):
+            self.entries.append(DirEntry(self))
 
     def getData(self, name, num=1):
         entry = self.getEntry(name, num)
@@ -42,35 +48,35 @@ class SG1_Reader:
                 return e
         return None
 
-    def readData(self, type, num):
+    def readData(self, type, numelements):
         if type == 1:
-            return [self.readNextByte() for i in range(num)]
+            return [self.readNextByte() for i in range(numelements)]
         elif type == 2:
-            return self.readNextString(num)
+            return self.readNextString(numelements)
         elif type == 3:
-            return [self.readNextUnsignedInt() for i in range(num)]
+            return [self.readNextUnsignedInt() for i in range(numelements)]
         elif type == 4:
-            return [self.readNextShort() for i in range(num)]
+            return [self.readNextShort() for i in range(numelements)]
         elif type == 5:
-            return [self.readNextLong() for i in range(num)]
+            return [self.readNextLong() for i in range(numelements)]
         elif type == 7:
-            return [self.readNextFloat() for i in range(num)]
+            return [self.readNextFloat() for i in range(numelements)]
         elif type == 8:
-            return [self.readNextDouble() for i in range(num)]
+            return [self.readNextDouble() for i in range(numelements)]
         elif type == 10:
-            return [self.readNextDate() for i in range(num)]
+            return [self.readNextDate() for i in range(numelements)]
         elif type == 11:
-            return [self.readNextTime() for i in range(num)]
+            return [self.readNextTime() for i in range(numelements)]
         elif type == 12:
-            return [self.readNextThumb() for i in range(num)]
+            return [self.readNextThumb() for i in range(numelements)]
         elif type == 13:
-            return [self.readNextBool() for i in range(num)]
+            return [self.readNextBool() for i in range(numelements)]
         elif type == 18:
             return self.readNextpString()
         elif type == 19:
             return self.readNextcString()
         elif type >= 1024:
-            return self.readNextUserData(type, num)
+            return self.readNextUserData(type, numelements)
         else:
             return NotImplemented
 
@@ -137,6 +143,15 @@ class SG1_Reader:
 
         :param format:
         :param nb: number of bytes
+            'c'  1 - Char
+            'B'  1 - Byte
+            '>h' 2 - Short
+            '>I' 4 - UnsignedInt
+            '>i' 4 - Int
+            '>l' 4 - Long
+            '>f' 4 - Float
+            '>d' 8 - Double
+
         :return:
         """
         x = struct.unpack(format, self.file.read(nb))
@@ -150,3 +165,33 @@ class SG1_Reader:
 
     def tell(self):
         return self.file.tell()
+
+
+SG1_TYPES = {1: 'byte', 2: 'char', 3: 'word', 4: 'short', 5: 'long', 7: 'float', 8: 'double', 10: 'date', 11: 'time', 12: 'thumb', 13: 'bool', 18: 'pString', 19: 'cString'}
+
+class DirEntry:# Reader
+    def __init__(self, reader):
+        self.name = reader.readNextString(4)        # tag name
+        self.number = reader.readNextInt()          # tag number
+        self.elementtype = reader.readNextShort()   # element type code
+        self.elementsize = reader.readNextShort()   # size in bytes of one element
+        self.numelements = reader.readNextInt()     # number of elements in item
+        self.datasize = reader.readNextInt()        # size in bytes of item
+        self.dataoffsetpos = reader.tell()
+        self.dataoffset = reader.readNextInt()      # item's data, or offset in file
+        self.datahandle = reader.readNextInt()      # reserved
+
+    def __str__(self):
+        return "%s (%i) / %s (%i)" % (self.name, self.number, self.mytype(), self.numelements)
+
+    def mydataoffset(self):
+        if self.datasize <= 4:
+            return self.dataoffsetpos
+        else:
+            return self.dataoffset
+
+    def mytype(self):
+        if self.elementtype < 1024:
+            return SG1_TYPES.get(self.elementtype, 'unknown')
+        else:
+            return 'user'
