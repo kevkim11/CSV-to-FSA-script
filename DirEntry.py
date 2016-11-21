@@ -28,6 +28,7 @@ class DirEntry:# Reader
         self.datasize = reader.readNextInt()        # size in bytes of item
         self.dataoffsetpos = reader.tell()
         self.dataoffset = reader.readNextInt()      # item's data, or offset in file
+        # DATA
         self.datahandle = reader.readNextInt()      # reserved
 
     def __str__(self):

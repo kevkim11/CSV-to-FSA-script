@@ -76,6 +76,56 @@ class SG1_Writer:
         # dir = DirEntryWriter(self)
         self.seek(struct.unpack('>i', packed_tdir_data_offset)[0])
 
+        """Entries"""
+        """TRAC/DATA"""
+
+        for i in [1, 2, 3, 4, 105]:
+            # Iterating through a list of numbers that corresponds with the number variable.
+
+            # Name
+            T = struct.pack('c', 'T')
+            R = struct.pack('c', 'R')
+            A = struct.pack('c', 'A')
+            C = struct.pack('c', 'C')
+            for i in [T, R, A, C]:
+                self.file.write(i)
+
+            # Number - Use i to fill number during iteration
+            packed_TRAC_num = struct.pack('>i', i)
+            self.file.write(packed_TRAC_num)
+
+            # Element Type (Always 4 for DATA)
+            packed_TRAC_element_type = struct.pack('>h', 4)
+            self.file.write(packed_TRAC_element_type)
+
+            # Element Size (Always 2 for DATA)
+            packed_TRAC_element_size = struct.pack('>h', 2)
+            self.file.write(packed_TRAC_element_size)
+
+            # Number of Elements (7031 for this specific DATA)
+            packed_TRAC_num_elements = struct.pack('>i', 7031)
+            self.file.write(packed_TRAC_num_elements)
+
+            #TODO - Start here next time
+            # Data Size = Element Size * Number of Elements
+            packed_TRAC_data_size = struct.pack('>i', 14062)
+            self.file.write(packed_TRAC_data_size)
+
+            # Data offset pos - Don't need to write this...
+
+            # Data offset
+            packed_TRAC_data_offset = struct.pack('>i', 128)
+            self.file.write(packed_TRAC_data_offset)
+
+            """ Need to actually put data now..."""
+
+            # Data handle = 0 ALWAYS (I Think)
+            packed_tdir_data_handle = struct.pack('>i', 0)
+            self.file.write(packed_tdir_data_handle)
+        #
+        # # dir = DirEntryWriter(self)
+        # self.seek(struct.unpack('>i', packed_tdir_data_offset)[0])
+
         # if self.type != 'SG1F':
         #     self.close()
         #     raise SystemExit("error: No SG1F file '%s'" % fn)

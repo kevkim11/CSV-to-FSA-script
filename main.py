@@ -109,10 +109,14 @@ if __name__ == "__main__":
     Read
     """
     SG1_reader = SG1_Reader(directory_sg)
-    print "a"
 
-    # data = [SG1_reader.getData('TRAC', 1), SG1_reader.getData('TRAC', 2), SG1_reader.getData('TRAC', 3),
-    #         SG1_reader.getData('TRAC', 4), SG1_reader.getData('TRAC', 105)]
+
+    data = [SG1_reader.getData('TRAC', 1), SG1_reader.getData('TRAC', 2), SG1_reader.getData('TRAC', 3),
+            SG1_reader.getData('TRAC', 4), SG1_reader.getData('TRAC', 105)]
+    for i in data:
+        print i
+
+    print "a"
     #
     # plot_dyes(data)
     # plt.show()
