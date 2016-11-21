@@ -88,23 +88,22 @@ class SG1_Writer:
         # Contains a list of list of the dye values.
         list_of_list = df.values.tolist()
         # value for the offset position in which the data is stored.
-        data_offset = 128
+        data_data_offset = 128
 
 
         ### FOR LOOP
         for a, dye in itertools.izip([1, 2, 3, 4, 105], list_of_list):
             # Iterating through a list of numbers that corresponds with the number variable.
 
-            dataoffsetpos0 = self.tell()
+            # dataoffsetpos0 = self.tell()
 
             # Name
             T = struct.pack('c', 'T')
             R = struct.pack('c', 'R')
             A = struct.pack('c', 'A')
             C = struct.pack('c', 'C')
-            for i in [T, R, A, C]:
-                self.file.write(i)
-
+            for letters in [T, R, A, C]:
+                self.file.write(letters)
 
             # Number - Use i to fill number during iteration
             packed_TRAC_num = struct.pack('>i', a)
@@ -114,13 +113,13 @@ class SG1_Writer:
             packed_TRAC_element_type = struct.pack('>h', 4)
             self.file.write(packed_TRAC_element_type)
 
-            dataoffsetpos1 = self.tell()
+            # dataoffsetpos1 = self.tell()
 
             # Element Size (Always 2 for DATA)
             packed_TRAC_element_size = struct.pack('>h', 2)
             self.file.write(packed_TRAC_element_size)
 
-            dataoffsetpos2 = self.tell()
+            # dataoffsetpos2 = self.tell()
 
             # Number of Elements (7031 for this specific DATA)
             number_of_elements = 7031
@@ -137,24 +136,23 @@ class SG1_Writer:
             dataoffsetpos3 = self.tell()
 
             # Data offset (need to increment by 14062)
-            packed_TRAC_data_offset = struct.pack('>i', data_offset)
+            packed_TRAC_data_offset = struct.pack('>i', data_data_offset)
             self.file.write(packed_TRAC_data_offset)
-
-
 
             # Data handle = 0 ALWAYS (I Think)
             packed_TRAC_data_handle = struct.pack('>i', 0)
             self.file.write(packed_TRAC_data_handle)
 
-            dataoffsetpos4 = str(self.tell())
+            """ Need to actually put data now..."""
+
+            # dataoffsetpos4 = str(self.tell())
             global_data_offset+=28
 
-            self.seek(data_offset)
-            data_offset += data_size
+            self.seek(data_data_offset)
+            data_data_offset += data_size
 
-            dataoffsetpos5 = self.tell()
+            # dataoffsetpos5 = self.tell()
 
-            """ Need to actually put data now..."""
             # 2) Iterate over those data and store them into file a byte at a time
             for value in dye:
                 packed_TRAC_data_data = struct.pack('>h', value)
@@ -163,13 +161,15 @@ class SG1_Writer:
             self.seek(global_data_offset)
 
             dataoffsetpos6 = self.tell()
+            print "b"
 
         """Dye# (entry 5)"""
+        dye_data_offset = 327680
         dataoffsetpos7 = self.tell()
         # Name
         D = struct.pack('c', 'D')
-        Y = struct.pack('c', 'Y')
-        E = struct.pack('c', 'E')
+        Y = struct.pack('c', 'y')
+        E = struct.pack('c', 'e')
         num = struct.pack('c', '#')
         for i in [D, Y, E, num]:
             self.file.write(i)
@@ -196,7 +196,7 @@ class SG1_Writer:
         self.file.write(packed_DYE_data_size)
 
         # Data offset pos - Don't need to write this...
-        dataoffsetpos100 = self.tell()
+        dataoffsetpos8 = self.tell()
 
         # Data offset
         DYE_data_offset = 327680
@@ -207,56 +207,147 @@ class SG1_Writer:
         packed_DYE_data_handle = struct.pack('>i', 0)
         self.file.write(packed_DYE_data_handle)
 
+        dataoffsetpos14 = self.tell()
+
+        """ Need to actually put data now..."""
+
+        # dataoffsetpos4 = str(self.tell())
+        global_data_offset += 28
+
+        # Go To where the data is supposed to be stored
+        self.seek(DYE_data_offset)
+        # data_data_offset += packed_DYE_data_size
+
+        dataoffsetpos11 = self.tell()
+
+        # Add 5 because there's a total of 5 dyes
+        packed_DYE_data_data = struct.pack('>h', 5)
+        self.file.write(packed_DYE_data_data)
+
+        self.seek(global_data_offset)
+
+        dataoffsetpos12 = self.tell()
+
         print "a"
+        # global_data_offset += 28
 
         """RUND / date (entry 6 and 7)"""
+        # DATE_dataoffsetpos = 70626
+        for date in range(2):
+            dataoffsetpos9 = self.tell()
 
-        # Name
-        RR = struct.pack('c', 'R')
-        UU = struct.pack('c', 'U')
-        NN = struct.pack('c', 'N')
-        DD = struct.pack('c', 'D')
-        for i in [RR, UU, NN, DD]:
-            self.file.write(i)
 
-        # Number (do a for loop and put i)
-        packed_DATE_num = struct.pack('>i', 1)
-        self.file.write(packed_DATE_num)
+            # Name
+            RR = struct.pack('c', 'R')
+            UU = struct.pack('c', 'U')
+            NN = struct.pack('c', 'N')
+            DD = struct.pack('c', 'D')
+            for i in [RR, UU, NN, DD]:
+                self.file.write(i)
 
-        # Element Type (Always 4 for DATA)
-        packed_DYE_element_type = struct.pack('>h', 4)
-        self.file.write(packed_DYE_element_type)
+            # Number (do a for loop and put i)
+            packed_DATE_num = struct.pack('>i', date+1)
+            self.file.write(packed_DATE_num)
 
-        # Element Size (Always 2 for DATA)
-        packed_DYE_element_size = struct.pack('>h', 2)
-        self.file.write(packed_DYE_element_size)
+            # Element Type (Always 10 for DATE)
+            packed_DATE_element_type = struct.pack('>h', 10)
+            self.file.write(packed_DATE_element_type)
 
-        # Number of Elements (1 element for DYE)
-        packed_DYE_num_elements = struct.pack('>i', 1)
-        self.file.write(packed_DYE_num_elements)
+            # Element Size (Always 4 for DATE)
+            packed_DATE_element_size = struct.pack('>h', 4)
+            self.file.write(packed_DATE_element_size)
 
-        # Data Size = Element Size * Number of Elements
-        # for dye, the data size is 2
-        packed_DYE_data_size = struct.pack('>i', 2)
-        self.file.write(packed_DYE_data_size)
+            # Number of Elements (1 element for DATE)
+            packed_DATE_num_elements = struct.pack('>i', 1)
+            self.file.write(packed_DATE_num_elements)
 
-        # Data offset pos - Don't need to write this...
-        dataoffsetpos100 = self.tell()
+            # Data Size = Element Size * Number of Elements
+            # for dye, the data size is 2
+            packed_DATE_data_size = struct.pack('>i', 4)
+            self.file.write(packed_DATE_data_size)
 
-        # Data offset
-        DYE_data_offset = 327680
-        packed_DYE_data_offset = struct.pack('>i', DYE_data_offset)
-        self.file.write(packed_DYE_data_offset)
+            # DATE offset
+            dataoffsetpos24 = self.tell()
+            DATE_data_offset = 132123409
+            packed_DATE_data_offset = struct.pack('>i', DATE_data_offset)
+            self.file.write(packed_DATE_data_offset)
 
-        # Data handle = 0 ALWAYS (I Think)
-        packed_DYE_data_handle = struct.pack('>i', 0)
-        self.file.write(packed_DYE_data_handle)
+            # Data handle = 0 ALWAYS (I Think)
+            packed_DATE_data_handle = struct.pack('>i', 0)
+            self.file.write(packed_DATE_data_handle)
 
-        print "a"
+            """ Need to actually put data now..."""
+
+            # dataoffsetpos4 = str(self.tell())
+            global_data_offset += 28
+
+            # Go To where the data is supposed to be stored
+            self.seek(DATE_data_offset)
+            # data_data_offset += packed_DYE_data_size
+
+            dataoffsetpos21 = self.tell()
+
+            # Add 5 because there's a total of 5 dyes
+            year = struct.pack('>h', 2016)
+            self.file.write(year)
+            month = struct.pack('B', 11)
+            self.file.write(month)
+            day = struct.pack('B', 17)
+            self.file.write(day)
+
+            self.seek(global_data_offset)
+
+            dataoffsetpos22 = self.tell()
 
         """RUNT / time (entry 8 and 9)"""
 
-
+        # for time in range(2):
+        #     dataoffsetpos11 = self.tell()
+        #
+        #     # Name
+        #     RR = struct.pack('c', 'R')
+        #     UU = struct.pack('c', 'U')
+        #     NN = struct.pack('c', 'N')
+        #     DD = struct.pack('c', 'D')
+        #     for i in [RR, UU, NN, DD]:
+        #         self.file.write(i)
+        #
+        #     # Number (do a for loop and put i)
+        #     packed_DATE_num = struct.pack('>i', time+1)
+        #     self.file.write(packed_DATE_num)
+        #
+        #     # Element Type (Always 10 for DATE)
+        #     packed_DATE_element_type = struct.pack('>h', 10)
+        #     self.file.write(packed_DATE_element_type)
+        #
+        #     # Element Size (Always 4 for DATE)
+        #     packed_DATE_element_size = struct.pack('>h', 4)
+        #     self.file.write(packed_DATE_element_size)
+        #
+        #     # Number of Elements (1 element for DATE)
+        #     packed_DATE_num_elements = struct.pack('>i', 1)
+        #     self.file.write(packed_DATE_num_elements)
+        #
+        #     # Data Size = Element Size * Number of Elements
+        #     # for dye, the data size is 2
+        #     packed_DATE_data_size = struct.pack('>i', 4)
+        #     self.file.write(packed_DATE_data_size)
+        #
+        #     # Data offset pos - Don't need to write this...
+        #     dataoffsetpos10 = self.tell()
+        #
+        #     # NEED TO PUT THE DATE
+        #     year = struct.pack('>h', 2016)
+        #     self.file.write(year)
+        #     month = struct.pack('B', 11)
+        #     self.file.write(month)
+        #     day = struct.pack('B', 17)
+        #     self.file.write(day)
+        #
+        #     # DATE offset
+        #     DATE_data_offset = 132123409
+        #     packed_DATE_data_offset = struct.pack('>i', DATE_data_offset)
+        #     self.file.write(packed_DATE_data_offset)
 
 
     def store_data(self):

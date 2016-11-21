@@ -112,15 +112,19 @@ if __name__ == "__main__":
     """
     Read
     """
-    SG1_reader = SG1_Reader(directory_sg)
+    # SG1_reader = SG1_Reader(directory_sg)
+    # SG1_reader.showEntries()
 
-    SG1_reader.storeEntries()
+    # SG1_reader.storeEntries()
 
 
     # data = [SG1_reader.getData('TRAC', 1), SG1_reader.getData('TRAC', 2), SG1_reader.getData('TRAC', 3),
     #         SG1_reader.getData('TRAC', 4), SG1_reader.getData('TRAC', 105)]
-    one = SG1_reader.getData('TRAC', 1)
-    two = SG1_reader.getData('TRAC', 2)
+    # one = SG1_reader.getData('TRAC', 1)
+    # two = SG1_reader.getData('TRAC', 2)
+    Dye_num = SG1_reader.getData('Dye#', 1)
+    TIME1 = SG1_reader.getData('RUND', 1)
+    TIME2 = SG1_reader.getData('RUND', 2)
     # a = pd.DataFrame(data)
     # a.to_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv')
     # for i in data:

@@ -129,7 +129,19 @@ class SG1_Reader:
                 chars.append(c)
 
     def readNextDate(self):
-        return datetime.date(self.readNextShort(), self.readNextByte(), self.readNextByte())
+        a = self.readNextShort()
+        b = self.readNextByte()
+        c = self.readNextByte()
+        d = datetime.date(a, b, c)
+        return d
+
+    def readNextTime(self):
+        a = self.readNextByte()
+        b = self.readNextByte()
+        c = self.readNextByte()
+        d = self.readNextByte() * 10000
+        e = datetime.time(a, b, c, d)
+        return e
 
     def readNextDouble(self):
         return self.primUnpack('>d', 8)
@@ -157,9 +169,6 @@ class SG1_Reader:
 
     def readNextThumb(self):
         return (self.readNextLong(), self.readNextLong(), self.readNextByte(), self.readNextByte())
-
-    def readNextTime(self):
-        return datetime.time(self.readNextByte(), self.readNextByte(), self.readNextByte(), self.readNextByte() * 10000)
 
     def readNextUnsignedInt(self):
         return self.primUnpack('>I', 4)
