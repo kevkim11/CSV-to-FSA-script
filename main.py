@@ -112,9 +112,9 @@ if __name__ == "__main__":
     """
     Read
     """
-    # SG1_reader = SG1_Reader(directory_sg)
+    SG1_reader = SG1_Reader(directory_sg)
 
-    # SG1_reader.storeEntries()
+    SG1_reader.storeEntries()
 
 
     # data = [SG1_reader.getData('TRAC', 1), SG1_reader.getData('TRAC', 2), SG1_reader.getData('TRAC', 3),

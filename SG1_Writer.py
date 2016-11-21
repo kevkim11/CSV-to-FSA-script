@@ -82,14 +82,13 @@ class SG1_Writer:
         self.seek(struct.unpack('>i', packed_tdir_data_offset)[0])
 
         """Entries"""
-        """TRAC/DATA"""
+
+        """TRAC/DATA (0-4 entries)"""
         df = pd.read_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv', index_col=0)
         # Contains a list of list of the dye values.
         list_of_list = df.values.tolist()
-
+        # value for the offset position in which the data is stored.
         data_offset = 128
-
-        # dataoffsetpos = self.tell()
 
 
         ### FOR LOOP
@@ -165,57 +164,101 @@ class SG1_Writer:
 
             dataoffsetpos6 = self.tell()
 
+        """Dye# (entry 5)"""
+        dataoffsetpos7 = self.tell()
+        # Name
+        D = struct.pack('c', 'D')
+        Y = struct.pack('c', 'Y')
+        E = struct.pack('c', 'E')
+        num = struct.pack('c', '#')
+        for i in [D, Y, E, num]:
+            self.file.write(i)
 
-        ### NO FOR LOOP, Just hard code the two first dyes
-        # Iterating through a list of numbers that corresponds with the number variable.
+        # Number
+        packed_DYE_num = struct.pack('>i', 1)
+        self.file.write(packed_DYE_num)
+
+        # Element Type (Always 4 for DATA)
+        packed_DYE_element_type = struct.pack('>h', 4)
+        self.file.write(packed_DYE_element_type)
+
+        # Element Size (Always 2 for DATA)
+        packed_DYE_element_size = struct.pack('>h', 2)
+        self.file.write(packed_DYE_element_size)
+
+        # Number of Elements (1 element for DYE)
+        packed_DYE_num_elements = struct.pack('>i', 1)
+        self.file.write(packed_DYE_num_elements)
+
+        # Data Size = Element Size * Number of Elements
+        # for dye, the data size is 2
+        packed_DYE_data_size = struct.pack('>i', 2)
+        self.file.write(packed_DYE_data_size)
+
+        # Data offset pos - Don't need to write this...
+        dataoffsetpos100 = self.tell()
+
+        # Data offset
+        DYE_data_offset = 327680
+        packed_DYE_data_offset = struct.pack('>i', DYE_data_offset)
+        self.file.write(packed_DYE_data_offset)
+
+        # Data handle = 0 ALWAYS (I Think)
+        packed_DYE_data_handle = struct.pack('>i', 0)
+        self.file.write(packed_DYE_data_handle)
+
+        print "a"
+
+        """RUND / date (entry 6 and 7)"""
 
         # Name
-        # T = struct.pack('c', 'T')
-        # R = struct.pack('c', 'R')
-        # A = struct.pack('c', 'A')
-        # C = struct.pack('c', 'C')
-        # for i in [T, R, A, C]:
-        #     self.file.write(i)
-        #
-        # # Number - Use i to fill number during iteration
-        # packed_TRAC_num = struct.pack('>i', 1)
-        # self.file.write(packed_TRAC_num)
-        #
-        # # Element Type (Always 4 for DATA)
-        # packed_TRAC_element_type = struct.pack('>h', 4)
-        # self.file.write(packed_TRAC_element_type)
-        #
-        # # Element Size (Always 2 for DATA)
-        # packed_TRAC_element_size = struct.pack('>h', 2)
-        # self.file.write(packed_TRAC_element_size)
-        #
-        # # Number of Elements (7031 for this specific DATA)
-        # number_of_elements = 7031
-        # packed_TRAC_num_elements = struct.pack('>i', number_of_elements)
-        # self.file.write(packed_TRAC_num_elements)
-        #
-        # # Data Size = Element Size * Number of Elements
-        # # For this data set, all the values are 14062
-        # data_size = 14062
-        # packed_TRAC_data_size = struct.pack('>i', data_size)
-        # self.file.write(packed_TRAC_data_size)
-        #
-        # # Data offset pos - Don't need to write this...
-        #
-        # # Data offset (need to increment by 14062)
-        # packed_TRAC_data_offset = struct.pack('>i', data_offset)
-        # self.file.write(packed_TRAC_data_offset)
-        # data_offset += data_size
-        #
-        # """ Need to actually put data now..."""
-        # # 2) Iterate over those data and store them into file a byte at a time
-        # for value in list_of_list[0]:
-        #     packed_TRAC_data_data = struct.pack('>h', value)
-        #     self.file.write(packed_TRAC_data_data)
-        #
-        # # Data handle = 0 ALWAYS (I Think)
-        # packed_TRAC_data_handle = struct.pack('>i', 0)
-        # self.file.write(packed_TRAC_data_handle)
+        RR = struct.pack('c', 'R')
+        UU = struct.pack('c', 'U')
+        NN = struct.pack('c', 'N')
+        DD = struct.pack('c', 'D')
+        for i in [RR, UU, NN, DD]:
+            self.file.write(i)
+
+        # Number (do a for loop and put i)
+        packed_DATE_num = struct.pack('>i', 1)
+        self.file.write(packed_DATE_num)
+
+        # Element Type (Always 4 for DATA)
+        packed_DYE_element_type = struct.pack('>h', 4)
+        self.file.write(packed_DYE_element_type)
+
+        # Element Size (Always 2 for DATA)
+        packed_DYE_element_size = struct.pack('>h', 2)
+        self.file.write(packed_DYE_element_size)
+
+        # Number of Elements (1 element for DYE)
+        packed_DYE_num_elements = struct.pack('>i', 1)
+        self.file.write(packed_DYE_num_elements)
+
+        # Data Size = Element Size * Number of Elements
+        # for dye, the data size is 2
+        packed_DYE_data_size = struct.pack('>i', 2)
+        self.file.write(packed_DYE_data_size)
+
+        # Data offset pos - Don't need to write this...
+        dataoffsetpos100 = self.tell()
+
+        # Data offset
+        DYE_data_offset = 327680
+        packed_DYE_data_offset = struct.pack('>i', DYE_data_offset)
+        self.file.write(packed_DYE_data_offset)
+
+        # Data handle = 0 ALWAYS (I Think)
+        packed_DYE_data_handle = struct.pack('>i', 0)
+        self.file.write(packed_DYE_data_handle)
+
+        print "a"
+
+        """RUNT / time (entry 8 and 9)"""
+
+
+
+
     def store_data(self):
         pass
 
