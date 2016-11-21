@@ -6,6 +6,7 @@ from ABIFReader import *
 
 from DirEntry import *
 
+import pandas as pd
 
 class SG1_Reader:
     """
@@ -31,7 +32,7 @@ class SG1_Reader:
         entry = self.getEntry(name, num)
         if not entry:
             raise SystemExit("error: Entry '%s (%i)' not found in '%s'" % (name, num, self.filename))
-        self.seek(entry.mydataoffset())
+        self.seek(entry.mydataoffset()) # self.dataoffset
         data = self.readData(entry.elementtype, entry.numelements)
         if data != NotImplemented and len(data) == 1:
             return data[0]
@@ -41,6 +42,35 @@ class SG1_Reader:
     def showEntries(self):
         for e in self.entries:
             print e
+    def storeEntries(self):
+        """
+        Custom method I made in order to better visualize the entries data.
+        :return:
+        """
+        dict = {
+            "name": [],
+            "number": [],
+            "elementtype": [],
+            "elementsize": [],
+            "numelements": [],
+            "data size": [],
+            "dataoffsetpos": [],
+            "data offset": [],
+            "data handle": []
+        }
+        for e in self.entries:
+            dict["name"].append(e.name)
+            dict["number"].append(e.number)
+            dict["elementtype"].append(e.elementtype)
+            dict["elementsize"].append(e.elementsize)
+            dict["numelements"].append(e.numelements)
+            dict["data size"].append(e.datasize)
+            dict["dataoffsetpos"].append(e.dataoffsetpos)
+            dict["data offset"].append(e.dataoffset)
+            dict["data handle"].append(e.datahandle)
+
+        df = pd.DataFrame(dict)
+        print "a"
 
     def getEntry(self, name, num):
         for e in self.entries:

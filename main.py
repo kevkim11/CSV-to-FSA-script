@@ -2,12 +2,14 @@ import csv
 import sys
 import os
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 from ABIFReader import *
 from SG1_Reader import *
 from SG1_Writer import *
 from os.path import isdir, isfile, join
+
+import pandas as pd
 
 def plot_dyes(list_list_dyes, list_of_baseline_x = [], list_of_baseline_y = [], scatter = False):
     """
@@ -103,18 +105,26 @@ if __name__ == "__main__":
     Write
     """
 
-    # SG1_Writer(directory_sg_out)
+    SG1_Writer(directory_sg_out)
+    SG1_reader = SG1_Reader(directory_sg_out)
+    print "a"
 
     """
     Read
     """
-    SG1_reader = SG1_Reader(directory_sg)
+    # SG1_reader = SG1_Reader(directory_sg)
+
+    # SG1_reader.storeEntries()
 
 
-    data = [SG1_reader.getData('TRAC', 1), SG1_reader.getData('TRAC', 2), SG1_reader.getData('TRAC', 3),
-            SG1_reader.getData('TRAC', 4), SG1_reader.getData('TRAC', 105)]
-    for i in data:
-        print i
+    # data = [SG1_reader.getData('TRAC', 1), SG1_reader.getData('TRAC', 2), SG1_reader.getData('TRAC', 3),
+    #         SG1_reader.getData('TRAC', 4), SG1_reader.getData('TRAC', 105)]
+    one = SG1_reader.getData('TRAC', 1)
+    two = SG1_reader.getData('TRAC', 2)
+    # a = pd.DataFrame(data)
+    # a.to_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv')
+    # for i in data:
+    #     print i
 
     print "a"
     #

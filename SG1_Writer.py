@@ -3,7 +3,11 @@ import datetime
 
 from ABIFReader import *
 
+import pandas as pd
+
 from DirEntry import *
+
+import itertools
 
 
 
@@ -66,7 +70,8 @@ class SG1_Writer:
         # Data offset pos - Don't need to write this...
 
         # Data offset
-        packed_tdir_data_offset = struct.pack('>i', 70438)
+        global_data_offset = 70438
+        packed_tdir_data_offset = struct.pack('>i', global_data_offset)
         self.file.write(packed_tdir_data_offset)
 
         # Data handle = 0
@@ -78,9 +83,20 @@ class SG1_Writer:
 
         """Entries"""
         """TRAC/DATA"""
+        df = pd.read_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv', index_col=0)
+        # Contains a list of list of the dye values.
+        list_of_list = df.values.tolist()
 
-        for i in [1, 2, 3, 4, 105]:
+        data_offset = 128
+
+        # dataoffsetpos = self.tell()
+
+
+        ### FOR LOOP
+        for a, dye in itertools.izip([1, 2, 3, 4, 105], list_of_list):
             # Iterating through a list of numbers that corresponds with the number variable.
+
+            dataoffsetpos0 = self.tell()
 
             # Name
             T = struct.pack('c', 'T')
@@ -90,49 +106,118 @@ class SG1_Writer:
             for i in [T, R, A, C]:
                 self.file.write(i)
 
+
             # Number - Use i to fill number during iteration
-            packed_TRAC_num = struct.pack('>i', i)
+            packed_TRAC_num = struct.pack('>i', a)
             self.file.write(packed_TRAC_num)
 
             # Element Type (Always 4 for DATA)
             packed_TRAC_element_type = struct.pack('>h', 4)
             self.file.write(packed_TRAC_element_type)
 
+            dataoffsetpos1 = self.tell()
+
             # Element Size (Always 2 for DATA)
             packed_TRAC_element_size = struct.pack('>h', 2)
             self.file.write(packed_TRAC_element_size)
 
+            dataoffsetpos2 = self.tell()
+
             # Number of Elements (7031 for this specific DATA)
-            packed_TRAC_num_elements = struct.pack('>i', 7031)
+            number_of_elements = 7031
+            packed_TRAC_num_elements = struct.pack('>i', number_of_elements)
             self.file.write(packed_TRAC_num_elements)
 
-            #TODO - Start here next time
             # Data Size = Element Size * Number of Elements
-            packed_TRAC_data_size = struct.pack('>i', 14062)
+            # For this data set, all the values are 14062
+            data_size = 14062
+            packed_TRAC_data_size = struct.pack('>i', data_size)
             self.file.write(packed_TRAC_data_size)
 
             # Data offset pos - Don't need to write this...
+            dataoffsetpos3 = self.tell()
 
-            # Data offset
-            packed_TRAC_data_offset = struct.pack('>i', 128)
+            # Data offset (need to increment by 14062)
+            packed_TRAC_data_offset = struct.pack('>i', data_offset)
             self.file.write(packed_TRAC_data_offset)
 
-            """ Need to actually put data now..."""
+
 
             # Data handle = 0 ALWAYS (I Think)
-            packed_tdir_data_handle = struct.pack('>i', 0)
-            self.file.write(packed_tdir_data_handle)
-        #
-        # # dir = DirEntryWriter(self)
-        # self.seek(struct.unpack('>i', packed_tdir_data_offset)[0])
+            packed_TRAC_data_handle = struct.pack('>i', 0)
+            self.file.write(packed_TRAC_data_handle)
 
-        # if self.type != 'SG1F':
-        #     self.close()
-        #     raise SystemExit("error: No SG1F file '%s'" % fn)
-        # self.version = self.readNextShort()
-        # dir = DirEntry(self)
-        # self.seek(dir.dataoffset)
-        # self.entries = [DirEntry(self) for i in range(dir.numelements)]
+            dataoffsetpos4 = str(self.tell())
+            global_data_offset+=28
+
+            self.seek(data_offset)
+            data_offset += data_size
+
+            dataoffsetpos5 = self.tell()
+
+            """ Need to actually put data now..."""
+            # 2) Iterate over those data and store them into file a byte at a time
+            for value in dye:
+                packed_TRAC_data_data = struct.pack('>h', value)
+                self.file.write(packed_TRAC_data_data)
+
+            self.seek(global_data_offset)
+
+            dataoffsetpos6 = self.tell()
+
+
+        ### NO FOR LOOP, Just hard code the two first dyes
+        # Iterating through a list of numbers that corresponds with the number variable.
+
+        # Name
+        # T = struct.pack('c', 'T')
+        # R = struct.pack('c', 'R')
+        # A = struct.pack('c', 'A')
+        # C = struct.pack('c', 'C')
+        # for i in [T, R, A, C]:
+        #     self.file.write(i)
+        #
+        # # Number - Use i to fill number during iteration
+        # packed_TRAC_num = struct.pack('>i', 1)
+        # self.file.write(packed_TRAC_num)
+        #
+        # # Element Type (Always 4 for DATA)
+        # packed_TRAC_element_type = struct.pack('>h', 4)
+        # self.file.write(packed_TRAC_element_type)
+        #
+        # # Element Size (Always 2 for DATA)
+        # packed_TRAC_element_size = struct.pack('>h', 2)
+        # self.file.write(packed_TRAC_element_size)
+        #
+        # # Number of Elements (7031 for this specific DATA)
+        # number_of_elements = 7031
+        # packed_TRAC_num_elements = struct.pack('>i', number_of_elements)
+        # self.file.write(packed_TRAC_num_elements)
+        #
+        # # Data Size = Element Size * Number of Elements
+        # # For this data set, all the values are 14062
+        # data_size = 14062
+        # packed_TRAC_data_size = struct.pack('>i', data_size)
+        # self.file.write(packed_TRAC_data_size)
+        #
+        # # Data offset pos - Don't need to write this...
+        #
+        # # Data offset (need to increment by 14062)
+        # packed_TRAC_data_offset = struct.pack('>i', data_offset)
+        # self.file.write(packed_TRAC_data_offset)
+        # data_offset += data_size
+        #
+        # """ Need to actually put data now..."""
+        # # 2) Iterate over those data and store them into file a byte at a time
+        # for value in list_of_list[0]:
+        #     packed_TRAC_data_data = struct.pack('>h', value)
+        #     self.file.write(packed_TRAC_data_data)
+        #
+        # # Data handle = 0 ALWAYS (I Think)
+        # packed_TRAC_data_handle = struct.pack('>i', 0)
+        # self.file.write(packed_TRAC_data_handle)
+    def store_data(self):
+        pass
 
     def writeNextChar(self):
         return self.primPack('c', 1)
@@ -166,3 +251,9 @@ class SG1_Writer:
 
     def tell(self):
         return self.file.tell()
+
+    def mydataoffset(self):
+        if self.datasize <= 4:
+            return self.dataoffsetpos
+        else:
+            return self.dataoffset
