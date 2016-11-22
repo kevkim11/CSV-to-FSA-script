@@ -139,7 +139,7 @@ class SG1_Reader:
         a = self.readNextByte()
         b = self.readNextByte()
         c = self.readNextByte()
-        d = self.readNextByte() * 10000
+        d = self.readNextByte()
         e = datetime.time(a, b, c, d)
         return e
 
