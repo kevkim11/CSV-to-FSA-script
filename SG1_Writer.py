@@ -19,11 +19,8 @@ class SG1_Writer:
     Class to create SG1 binary files using a list of list of 5 dyes.
     Has similar structure to that of an FSA file.
     """
-    def __init__(self, fn):
-        self.filename = fn
-        self.file = open(fn, 'wb')
-
-        """Header""" # Constant
+    def write_header(self):
+        # Always constant
         packed_S = struct.pack('c', 'S') # 0
         packed_G = struct.pack('c', 'G') # 1
         packed_1 = struct.pack('c', '1') # 2
@@ -32,9 +29,22 @@ class SG1_Writer:
         for i in l:
             self.file.write(i)
 
-        """Version""" # constant
+    def write_version(self):
+        # Always constant.
         packed_101 = struct.pack('>h', 101) # 4, 5 (2 bytes)
         self.file.write(packed_101)
+
+    def __init__(self, fn, list_of_list = None):
+        self.filename = fn
+        self.file = open(fn, 'wb')
+
+        """Header"""
+        # 0-3 (4 bytes)
+        self.write_header()
+
+        """Version"""
+         # 4, 5 (2 bytes)
+        self.write_version()
 
         """Directory Entry"""
 
