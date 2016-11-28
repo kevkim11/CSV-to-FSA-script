@@ -70,7 +70,7 @@ class SG1_Reader:
             dict["data handle"].append(e.datahandle)
 
         df = pd.DataFrame(dict)
-        print "a"
+        return df
 
     def getEntry(self, name, num):
         for e in self.entries:

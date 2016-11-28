@@ -1,3 +1,6 @@
+# Author: Kevin Kim
+# Version: 1.0.1, November 2016
+
 import struct
 import datetime
 
@@ -19,64 +22,68 @@ class SG1_Writer:
     def __init__(self, fn):
         self.filename = fn
         self.file = open(fn, 'wb')
-        # self.file.write('SG1F')  # self.type = self.readNextString(4)
-        # s = struct.Struct('c')
-        # values = ('S', 'G', '1', 'F')
-        # packed_data = s.pack(*values)
 
-        """Header"""
-        packed_S = struct.pack('c', 'S')
-        packed_G = struct.pack('c', 'G')
-        packed_1 = struct.pack('c', '1')
-        packed_F = struct.pack('c', 'F')
+        """Header""" # Constant
+        packed_S = struct.pack('c', 'S') # 0
+        packed_G = struct.pack('c', 'G') # 1
+        packed_1 = struct.pack('c', '1') # 2
+        packed_F = struct.pack('c', 'F') # 3
         l = [packed_S, packed_G, packed_1, packed_F]
         for i in l:
             self.file.write(i)
 
-        """Version"""
-        packed_101 = struct.pack('>h', 101)
+        """Version""" # constant
+        packed_101 = struct.pack('>h', 101) # 4, 5 (2 bytes)
         self.file.write(packed_101)
 
         """Directory Entry"""
 
         # Name
-        packed_t = struct.pack('c', 't')
-        packed_d = struct.pack('c', 'd')
-        packed_i = struct.pack('c', 'i')
-        packed_r = struct.pack('c', 'r')
+        packed_t = struct.pack('c', 't') # 6
+        packed_d = struct.pack('c', 'd') # 7
+        packed_i = struct.pack('c', 'i') # 8
+        packed_r = struct.pack('c', 'r') # 9
         for i in [packed_t, packed_d, packed_i, packed_r]:
             self.file.write(i)
 
         # Number
-        packed_tdir_num = struct.pack('>i', 1)
+        packed_tdir_num = struct.pack('>i', 1) # 10 - 13 (int = 4 bytes)
         self.file.write(packed_tdir_num)
 
         # Element Type
-        packed_tdir_element_type = struct.pack('>h', 1023)
+        packed_tdir_element_type = struct.pack('>h', 1023) # 14, 15 (short = 2 bytes)
         self.file.write(packed_tdir_element_type)
 
         # Element Size
-        packed_tdir_element_size = struct.pack('>h', 28)
+        packed_tdir_element_size = struct.pack('>h', 28) # 16, 17 (short = 2 bytes)
         self.file.write(packed_tdir_element_size)
 
         # Number of Elements
-        packed_tdir_num_elements = struct.pack('>i', 10)
+        packed_tdir_num_elements = struct.pack('>i', 10) # 18 - 21 (int = 4 bytes)
         self.file.write(packed_tdir_num_elements)
 
         # Data Size = Element Size * Number of Elements
-        packed_tdir_data_size = struct.pack('>i', 280)
+        packed_tdir_data_size = struct.pack('>i', 280) # 22 - 25
         self.file.write(packed_tdir_data_size)
 
         # Data offset pos - Don't need to write this...
 
         # Data offset
         global_data_offset = 70438
-        packed_tdir_data_offset = struct.pack('>i', global_data_offset)
+        packed_tdir_data_offset = struct.pack('>i', global_data_offset) # 26 - 29 (int = 4 bytes)
         self.file.write(packed_tdir_data_offset)
 
         # Data handle = 0
-        packed_tdir_data_handle = struct.pack('>i', 0)
+
+        packed_tdir_data_handle = struct.pack('>i', 0) #30 - 33
         self.file.write(packed_tdir_data_handle)
+
+        # DirEntry Unused space (pg 10)
+        # 34 - 128
+        for it in range(47):
+            packed_unused_2_bytes = struct.pack('>h', 0)
+            self.file.write(packed_unused_2_bytes)
+
 
         # dir = DirEntryWriter(self)
         self.seek(struct.unpack('>i', packed_tdir_data_offset)[0])
@@ -90,8 +97,6 @@ class SG1_Writer:
         # value for the offset position in which the data is stored.
         data_data_offset = 128
 
-
-        ### FOR LOOP
         for a, dye in itertools.izip([1, 2, 3, 4, 105], list_of_list):
             # Iterating through a list of numbers that corresponds with the number variable.
 
@@ -373,6 +378,15 @@ class SG1_Writer:
 
     def store_data(self):
         pass
+
+    def write_header(self):
+        packed_S = struct.pack('c', 'S')
+        packed_G = struct.pack('c', 'G')
+        packed_1 = struct.pack('c', '1')
+        packed_F = struct.pack('c', 'F')
+        l = [packed_S, packed_G, packed_1, packed_F]
+        for i in l:
+            self.file.write(i)
 
     def writeNextChar(self):
         return self.primPack('c', 1)

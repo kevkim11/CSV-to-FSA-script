@@ -76,28 +76,9 @@ if __name__ == "__main__":
     destination = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER'
     name = 'Allelic ladder - 10-14-16-5-21 PM.fsa'
 
-    # reader3 = ABIFReader(directory)
-    # reader3.showEntries()
-
-
-    #
-    # """
-    # Collect all data in list_of_data
-    # """
-    # list_of_data = []
-    # dict_of_data = {}
-    # for i in SG1_reader.entries:
-    #     data = SG1_reader.getData(i.name, i.number)
-    #
-    #     list_of_data.append(data)
-    #
-    #
-    # # data = [reader3.getData('DATA', 1), reader3.getData('DATA', 2), reader3.getData('DATA', 3),
-    # #         reader3.getData('DATA', 4), reader3.getData('DATA', 105)]
-    # # data2 = [reader3.getData('DATA', 5), reader3.getData('DATA', 6), reader3.getData('DATA', 7),
-    # #         reader3.getData('DATA', 8), reader3.getData('DyeN', 1)]
-    # print list_of_data
-
+    sg1_1 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/KevinTxtAllelicLadder.sg1'
+    sg1_2 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/310_converted_10_14_matrix.txt.sg1'
+    sg1_3 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/310_converted_11_9_Matrix_10mW.txt.sg1'
 
 
     #######################
@@ -112,7 +93,13 @@ if __name__ == "__main__":
     """
     Read
     """
-    # SG1_reader = SG1_Reader(directory_sg)
+    # SG1_1_reader = SG1_Reader(sg1_1)
+    # SG1_2_reader = SG1_Reader(sg1_2)
+    # SG1_3_reader = SG1_Reader(sg1_3)
+    # a = SG1_1_reader.storeEntries()
+    # b = SG1_2_reader.storeEntries()
+    # c = SG1_3_reader.storeEntries()
+    print "a"
     # SG1_reader.showEntries()
     #
     # SG1_reader.storeEntries()
@@ -122,11 +109,11 @@ if __name__ == "__main__":
     #         SG1_reader.getData('TRAC', 4), SG1_reader.getData('TRAC', 105)]
     # one = SG1_reader.getData('TRAC', 1)
     # two = SG1_reader.getData('TRAC', 2)
-    Dye_num = SG1_reader.getData('Dye#', 1)
-    DATE1 = SG1_reader.getData('RUND', 1)
-    DATE2 = SG1_reader.getData('RUND', 2)
-    TIME1 = SG1_reader.getData('RUNT', 1)
-    TIME2 = SG1_reader.getData('RUNT', 2)
+    # Dye_num = SG1_reader.getData('Dye#', 1)
+    # DATE1 = SG1_reader.getData('RUND', 1)
+    # DATE2 = SG1_reader.getData('RUND', 2)
+    # TIME1 = SG1_reader.getData('RUNT', 1)
+    # TIME2 = SG1_reader.getData('RUNT', 2)
     # a = pd.DataFrame(data)
     # a.to_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv')
     # for i in data:
