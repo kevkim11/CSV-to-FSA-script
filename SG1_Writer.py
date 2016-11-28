@@ -34,7 +34,7 @@ class SG1_Writer:
         packed_101 = struct.pack('>h', 101) # 4, 5 (2 bytes)
         self.file.write(packed_101)
 
-    def __init__(self, fn, list_of_list = None):
+    def __init__(self, fn, list_of_list2 = None):
         self.filename = fn
         self.file = open(fn, 'wb')
 
@@ -101,13 +101,15 @@ class SG1_Writer:
         """Entries"""
 
         """TRAC/DATA (0-4 entries)"""
-        df = pd.read_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv', index_col=0)
-        # Contains a list of list of the dye values.
-        list_of_list = df.values.tolist()
+        # df = pd.read_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv', index_col=0)
+        # # Contains a list of list of the dye values.
+        # list_of_list = df.values.tolist()
+
+        list_of_list_actual = list_of_list2
         # value for the offset position in which the data is stored.
         data_data_offset = 128
-
-        for a, dye in itertools.izip([1, 2, 3, 4, 105], list_of_list):
+        for a, dye in itertools.izip([1, 2, 3, 4, 105], list_of_list_actual):
+        # for a, dye in itertools.izip([1, 2, 3, 4, 105], list_of_list):
             # Iterating through a list of numbers that corresponds with the number variable.
 
             # dataoffsetpos0 = self.tell()
@@ -388,15 +390,6 @@ class SG1_Writer:
 
     def store_data(self):
         pass
-
-    def write_header(self):
-        packed_S = struct.pack('c', 'S')
-        packed_G = struct.pack('c', 'G')
-        packed_1 = struct.pack('c', '1')
-        packed_F = struct.pack('c', 'F')
-        l = [packed_S, packed_G, packed_1, packed_F]
-        for i in l:
-            self.file.write(i)
 
     def writeNextChar(self):
         return self.primPack('c', 1)

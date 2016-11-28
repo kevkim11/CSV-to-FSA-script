@@ -14,6 +14,7 @@ class SG1_Reader:
     Has similar structure to that of an FSA file.
     """
     def __init__(self, fn):
+        # type: (object) -> object
         self.filename = fn
         self.file = open(fn, 'rb')
         self.type = self.readNextString(4)

@@ -70,6 +70,10 @@ def plot_dyes(list_list_dyes, list_of_baseline_x = [], list_of_baseline_y = [], 
     return plot
 
 if __name__ == "__main__":
+    """
+    Variables
+    """
+    # Directory
     directory = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/Allelic ladder - 10-14-16-5-21 PM.fsa'
     directory_sg = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/KevinTxtAllelicLadder.sg1'
     directory_sg_out = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/output.sg1'
@@ -80,13 +84,17 @@ if __name__ == "__main__":
     sg1_2 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/310_converted_10_14_matrix.txt.sg1'
     sg1_3 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/310_converted_11_9_Matrix_10mW.txt.sg1'
 
+    # Dataframe/list_to_list
+    df = pd.read_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv', index_col=0)
+    # Contains a list of list of the dye values.
+    list_of_list = df.values.tolist()
 
     #######################
     """
     Write
     """
 
-    SG1_Writer(directory_sg_out)
+    SG1_Writer(directory_sg_out, list_of_list)
     SG1_reader = SG1_Reader(directory_sg_out)
     print "a"
 
