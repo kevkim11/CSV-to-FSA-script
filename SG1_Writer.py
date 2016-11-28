@@ -35,8 +35,13 @@ class SG1_Writer:
         self.file.write(packed_101)
 
     def __init__(self, fn, list_of_list2 = None):
+
+        """"""
+        """Variables"""
         self.filename = fn
         self.file = open(fn, 'wb')
+
+        GLOBAL_DATA_OFFSET = 70438
 
         """Header"""
         # 0-3 (4 bytes)
@@ -47,7 +52,6 @@ class SG1_Writer:
         self.write_version()
 
         """Directory Entry"""
-
         # Name
         packed_t = struct.pack('c', 't') # 6
         packed_d = struct.pack('c', 'd') # 7
@@ -55,56 +59,30 @@ class SG1_Writer:
         packed_r = struct.pack('c', 'r') # 9
         for i in [packed_t, packed_d, packed_i, packed_r]:
             self.file.write(i)
-
         # Number
-        packed_tdir_num = struct.pack('>i', 1) # 10 - 13 (int = 4 bytes)
-        self.file.write(packed_tdir_num)
-
+        self.file.write(struct.pack('>i', 1))  # 10 - 13 (int = 4 bytes)
         # Element Type
-        packed_tdir_element_type = struct.pack('>h', 1023) # 14, 15 (short = 2 bytes)
-        self.file.write(packed_tdir_element_type)
-
+        self.file.write(struct.pack('>h', 1023)) # 14, 15 (short = 2 bytes)
         # Element Size
-        packed_tdir_element_size = struct.pack('>h', 28) # 16, 17 (short = 2 bytes)
-        self.file.write(packed_tdir_element_size)
-
+        self.file.write(struct.pack('>h', 28)) # 16, 17 (short = 2 bytes)
         # Number of Elements
-        packed_tdir_num_elements = struct.pack('>i', 10) # 18 - 21 (int = 4 bytes)
-        self.file.write(packed_tdir_num_elements)
-
+        self.file.write(struct.pack('>i', 10)) # # 18 - 21 (int = 4 bytes)
         # Data Size = Element Size * Number of Elements
-        packed_tdir_data_size = struct.pack('>i', 280) # 22 - 25
-        self.file.write(packed_tdir_data_size)
-
+        self.file.write(struct.pack('>i', 280)) # 22 - 25
         # Data offset pos - Don't need to write this...
-
         # Data offset
-        global_data_offset = 70438
-        packed_tdir_data_offset = struct.pack('>i', global_data_offset) # 26 - 29 (int = 4 bytes)
-        self.file.write(packed_tdir_data_offset)
-
-        # Data handle = 0
-
-        packed_tdir_data_handle = struct.pack('>i', 0) #30 - 33
-        self.file.write(packed_tdir_data_handle)
-
+        self.file.write(struct.pack('>i', GLOBAL_DATA_OFFSET)) # 26 - 29 (int = 4 bytes)
+        # Data handle = 0 always
+        self.file.write(struct.pack('>i', 0) ) # 30 - 33
         # DirEntry Unused space (pg 10)
         # 34 - 128
         for it in range(47):
-            packed_unused_2_bytes = struct.pack('>h', 0)
-            self.file.write(packed_unused_2_bytes)
-
-
+            self.file.write(struct.pack('>h', 0))
         # dir = DirEntryWriter(self)
-        self.seek(struct.unpack('>i', packed_tdir_data_offset)[0])
-
+        self.seek(GLOBAL_DATA_OFFSET)
         """Entries"""
 
         """TRAC/DATA (0-4 entries)"""
-        # df = pd.read_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv', index_col=0)
-        # # Contains a list of list of the dye values.
-        # list_of_list = df.values.tolist()
-
         list_of_list_actual = list_of_list2
         # value for the offset position in which the data is stored.
         data_data_offset = 128
@@ -163,7 +141,7 @@ class SG1_Writer:
             """ Need to actually put data now..."""
 
             # dataoffsetpos4 = str(self.tell())
-            global_data_offset+=28
+            GLOBAL_DATA_OFFSET+=28
 
             self.seek(data_data_offset)
             data_data_offset += data_size
@@ -175,7 +153,7 @@ class SG1_Writer:
                 packed_TRAC_data_data = struct.pack('>h', value)
                 self.file.write(packed_TRAC_data_data)
 
-            self.seek(global_data_offset)
+            self.seek(GLOBAL_DATA_OFFSET)
 
             dataoffsetpos6 = self.tell()
             print "b"
@@ -229,7 +207,7 @@ class SG1_Writer:
         """ Need to actually put data now..."""
 
         # dataoffsetpos4 = str(self.tell())
-        global_data_offset += 28
+        GLOBAL_DATA_OFFSET += 28
 
         # Go To where the data is supposed to be stored
         self.seek(DYE_data_offset)
@@ -241,7 +219,7 @@ class SG1_Writer:
         packed_DYE_data_data = struct.pack('>h', 5)
         self.file.write(packed_DYE_data_data)
 
-        self.seek(global_data_offset)
+        self.seek(GLOBAL_DATA_OFFSET)
 
         dataoffsetpos12 = self.tell()
 
@@ -296,7 +274,7 @@ class SG1_Writer:
             """ Need to actually put data now..."""
 
             # dataoffsetpos4 = str(self.tell())
-            global_data_offset += 28
+            GLOBAL_DATA_OFFSET += 28
 
             # Go To where the data is supposed to be stored
             self.seek(DATE_data_offset)
@@ -312,7 +290,7 @@ class SG1_Writer:
             day = struct.pack('B', 17)
             self.file.write(day)
 
-            self.seek(global_data_offset)
+            self.seek(GLOBAL_DATA_OFFSET)
 
             dataoffsetpos22 = self.tell()
 
@@ -363,7 +341,7 @@ class SG1_Writer:
             """ Need to actually put data now..."""
 
             # dataoffsetpos4 = str(self.tell())
-            global_data_offset += 28
+            GLOBAL_DATA_OFFSET += 28
 
             # Go To where the data is supposed to be stored
             self.seek(TIME_data_offset)
@@ -381,7 +359,7 @@ class SG1_Writer:
             microseconds = struct.pack('B', 0)
             self.file.write(microseconds)
 
-            self.seek(global_data_offset)
+            self.seek(GLOBAL_DATA_OFFSET)
 
             dataoffsetpos32 = self.tell()
 
