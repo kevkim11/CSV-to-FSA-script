@@ -4,12 +4,15 @@
 import struct
 import itertools
 
+import logging
+
 class SG1_Writer:
     """
     Class to create SG1 binary files using a list of list of 5 dyes.
     Has similar structure to that of an FSA file.
     """
     def write_header_type(self):
+        logging.info('Started header')
         packed_S = struct.pack('c', 'S') # 0
         packed_G = struct.pack('c', 'G') # 1
         packed_1 = struct.pack('c', '1') # 2
@@ -17,8 +20,10 @@ class SG1_Writer:
         l = [packed_S, packed_G, packed_1, packed_F]
         for i in l:
             self.file.write(i)
+        logging.info('Finished header')
 
     def write_entry_name(self, a, b, c, d):
+        logging.info('write_entry_name started for %s', ''.join([a, b, c, d]))
         packed_1_char = struct.pack('c', a)
         packed_2_char = struct.pack('c', b)
         packed_3_char = struct.pack('c', c)
@@ -26,24 +31,26 @@ class SG1_Writer:
         for packed_char in [packed_1_char, packed_2_char, packed_3_char, packed_4_char]:
             self.file.write(packed_char)
 
-    def __init__(self, fn, list_of_list = None):
+    def __init__(self, fn, list_of_list):
+        """
 
-        """"""
+        :param fn: string - filename and directory
+        :param list_of_list: - list of list containing the values for joe, flu, tmr, cxr, and wen.
+        """
+
         """Variables"""
         self.filename = fn
         self.file = open(fn, 'wb')
 
-        GLOBAL_DATA_OFFSET = 327400
-
         """Header"""
-        # 0-3 (4 bytes)
-        self.write_header_type()
+        self.write_header_type() # 0-3 (4 bytes)
         """Version"""
         self.file.write(struct.pack('>h', 101))  # 4, 5 (2 bytes)
 
         """Directory Entry"""
+        entry_data_offset = 327400
         # Name
-        self.write_entry_name('t,', 'd', 'i', 'r')
+        self.write_entry_name('t', 'd', 'i', 'r')
         # Number
         self.file.write(struct.pack('>i', 1))  # 10 - 13 (int = 4 bytes)
         # Element Type
@@ -53,10 +60,10 @@ class SG1_Writer:
         # Number of Elements
         self.file.write(struct.pack('>i', 10)) # # 18 - 21 (int = 4 bytes)
         # Data Size = Element Size * Number of Elements
+        # For sg1 file, will always be 28*10=280
         self.file.write(struct.pack('>i', 280)) # 22 - 25
-        # Data offset pos - Don't need to write this...
         # Data offset
-        self.file.write(struct.pack('>i', GLOBAL_DATA_OFFSET)) # 26 - 29 (int = 4 bytes)
+        self.file.write(struct.pack('>i', entry_data_offset)) # 26 - 29 (int = 4 bytes)
         # Data handle = 0 always
         self.file.write(struct.pack('>i', 0)) # 30 - 33
         # DirEntry Unused space (pg 10) # 34 - 128
@@ -64,13 +71,11 @@ class SG1_Writer:
             self.file.write(struct.pack('>h', 0))
 
         """Entries"""
-        self.seek(GLOBAL_DATA_OFFSET)
+        self.seek(entry_data_offset)
         """TRAC/DATA (0-4 entries)"""
         data_data_offset = 128
         for TRAC_number, dye in itertools.izip([1, 2, 3, 4, 105], list_of_list):
             # Iterating through a list of numbers that corresponds with the number variable.
-            global_data_offset_counter = 0
-            dataoffsetpos0 = self.tell()
             # Name
             self.write_entry_name('T', 'R', 'A', 'C')
             # Number - int = 4 bytes
@@ -83,22 +88,22 @@ class SG1_Writer:
             number_of_elements = len(dye)
             self.file.write(struct.pack('>i', number_of_elements))
             # Data Size = 2 (Element Size) * Number of Elements
-            data_size = number_of_elements * 2
+            data_size = 2 * number_of_elements
             self.file.write(struct.pack('>i', data_size))
             # Data offset pos - Don't need to write this...
             self.file.write(struct.pack('>i', data_data_offset))
             # Data handle = 0 ALWAYS (I Think)
             self.file.write(struct.pack('>i', 0))
             """ STORE DATA """
-            GLOBAL_DATA_OFFSET += 28
+            entry_data_offset += 28
             self.seek(data_data_offset)
             for value in dye:
                 self.file.write(struct.pack('>h', value))
             data_data_offset += data_size
-            self.seek(GLOBAL_DATA_OFFSET)
+            self.seek(entry_data_offset)
 
         """Dye# (entry 5)"""
-        DYE_data_offset = 327680
+        dye_data_offset = 327680
         # Name
         self.write_entry_name('D', 'y', 'e', '#')
         # Number
@@ -113,19 +118,19 @@ class SG1_Writer:
         # for dye, the data size is 2
         self.file.write(struct.pack('>i', 2))
         # Data offset pos - Don't need to write this...
-        self.file.write(struct.pack('>i', DYE_data_offset))
+        self.file.write(struct.pack('>i', dye_data_offset))
         # Data handle = 0 ALWAYS (I Think)
         self.file.write(struct.pack('>i', 0))
         """ STORE DATA """
-        GLOBAL_DATA_OFFSET += 28
+        entry_data_offset += 28
         # Go To where the data is supposed to be stored
-        self.seek(DYE_data_offset)
+        self.seek(dye_data_offset)
         self.file.write(struct.pack('>h', 5))
-        self.seek(GLOBAL_DATA_OFFSET)
+        self.seek(entry_data_offset)
 
         """RUND / date (entry 6 and 7)"""
         # DATE_dataoffsetpos = 70626
-        DATE_data_offset = 132123409
+        date_data_offset = 132123409
         for date in range(2):
             dataoffsetpos9 = self.tell()
             # Name
@@ -142,22 +147,22 @@ class SG1_Writer:
             # for dye, the data size is 2
             self.file.write(struct.pack('>i', 4))
             # DATE offset
-            packed_DATE_data_offset = struct.pack('>i', DATE_data_offset)
+            packed_DATE_data_offset = struct.pack('>i', date_data_offset)
             self.file.write(packed_DATE_data_offset)
             # Data handle = 0 ALWAYS (I Think)
             packed_DATE_data_handle = struct.pack('>i', 0)
             self.file.write(packed_DATE_data_handle)
             """ STORE DATA """
-            GLOBAL_DATA_OFFSET += 28
+            entry_data_offset += 28
             # Go To where the data is supposed to be stored
-            self.seek(DATE_data_offset)
+            self.seek(date_data_offset)
             year = struct.pack('>h', 2016)
             self.file.write(year)
             month = struct.pack('B', 11)
             self.file.write(month)
             day = struct.pack('B', 17)
             self.file.write(day)
-            self.seek(GLOBAL_DATA_OFFSET)
+            self.seek(entry_data_offset)
 
         """RUNT / time (entry 8 and 9)"""
         TIME_data_offset = 201326592
@@ -180,7 +185,7 @@ class SG1_Writer:
             # Data handle = 0 ALWAYS (I Think)
             self.file.write(struct.pack('>i', 0))
             """ STORE DATA """
-            GLOBAL_DATA_OFFSET += 28
+            entry_data_offset += 28
             self.seek(TIME_data_offset)
             hour = struct.pack('B', 12)
             self.file.write(hour)
@@ -190,7 +195,7 @@ class SG1_Writer:
             self.file.write(seconds)
             microseconds = struct.pack('B', 0)
             self.file.write(microseconds)
-            self.seek(GLOBAL_DATA_OFFSET)
+            self.seek(entry_data_offset)
 
     # Properly close the files.
     def close(self):

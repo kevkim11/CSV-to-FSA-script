@@ -98,7 +98,7 @@ if __name__ == "__main__":
     SG1_Writer(directory_sg_out, list_of_list)
     SG1_reader = SG1_Reader(directory_sg_out)
     a = SG1_reader.storeEntries()
-    # print "a"
+    print "a"
 
     """
     Read
@@ -109,14 +109,18 @@ if __name__ == "__main__":
     # a = SG1_1_reader.storeEntries()
     # b = SG1_2_reader.storeEntries()
     # c = SG1_3_reader.storeEntries()
-    print "a"
-    # SG1_reader.showEntries()
+    # print "a"
+    # # SG1_reader.showEntries()
+    # #
+    # # SG1_reader.storeEntries()
     #
-    # SG1_reader.storeEntries()
-
-
-    # data = [SG1_reader.getData('TRAC', 1), SG1_reader.getData('TRAC', 2), SG1_reader.getData('TRAC', 3),
-    #         SG1_reader.getData('TRAC', 4), SG1_reader.getData('TRAC', 105)]
+    #
+    # data1 = [SG1_1_reader.getData('TRAC', 1), SG1_1_reader.getData('TRAC', 2), SG1_1_reader.getData('TRAC', 3),
+    #         SG1_1_reader.getData('TRAC', 4), SG1_1_reader.getData('TRAC', 105)]
+    # data2 = [SG1_2_reader.getData('TRAC', 1), SG1_2_reader.getData('TRAC', 2), SG1_2_reader.getData('TRAC', 3),
+    #         SG1_2_reader.getData('TRAC', 4), SG1_2_reader.getData('TRAC', 105)]
+    # data3 = [SG1_3_reader.getData('TRAC', 1), SG1_3_reader.getData('TRAC', 2), SG1_3_reader.getData('TRAC', 3),
+    #         SG1_3_reader.getData('TRAC', 4), SG1_3_reader.getData('TRAC', 105)]
     # one = SG1_reader.getData('TRAC', 1)
     # two = SG1_reader.getData('TRAC', 2)
     # Dye_num = SG1_reader.getData('Dye#', 1)
