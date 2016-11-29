@@ -3,8 +3,10 @@
 
 import struct
 import itertools
-
 import logging
+from datetime import datetime
+
+#TODO Need to use long instead of short ints
 
 class SG1_Writer:
     """
@@ -41,6 +43,8 @@ class SG1_Writer:
         """Variables"""
         self.filename = fn
         self.file = open(fn, 'wb')
+        self.time_made = datetime.now()
+
 
         """Header"""
         self.write_header_type() # 0-3 (4 bytes)
@@ -103,7 +107,8 @@ class SG1_Writer:
             self.seek(entry_data_offset)
 
         """Dye# (entry 5)"""
-        dye_data_offset = 327680
+        dye_data_offset = 327680 # 5
+        # dye_data_offset = 327688  # 5
         # Name
         self.write_entry_name('D', 'y', 'e', '#')
         # Number
@@ -121,16 +126,25 @@ class SG1_Writer:
         self.file.write(struct.pack('>i', dye_data_offset))
         # Data handle = 0 ALWAYS (I Think)
         self.file.write(struct.pack('>i', 0))
-        """ STORE DATA """
-        entry_data_offset += 28
-        # Go To where the data is supposed to be stored
-        self.seek(dye_data_offset)
-        self.file.write(struct.pack('>h', 5))
-        self.seek(entry_data_offset)
+        """
+        todays_date_and_time = str(datetime.today())
+        date_and_time_list = todays_date_and_time.split()
+        date_list_str = date_and_time_list[0].split('-')
+        date_list_int = [int(x) for x in date_list_str]
+        print date_list_int
+        time_list_str = date_and_time_list[1].split(':')
+        time_list_int = [float(x) for x in time_list_str]
+        """
 
         """RUND / date (entry 6 and 7)"""
+        """
+        RUND 1 = Run Start Date
+        RUND 2 = Run Stop Date
+        """
         # DATE_dataoffsetpos = 70626
-        date_data_offset = 132123409
+        # date_data_offset = 132123409 # = 2016-11-17
+        # date_data_offset = 132123414 # = 2016-11-22
+        date_data_offset = 132123420  # = 2016-11-28
         for date in range(2):
             dataoffsetpos9 = self.tell()
             # Name
@@ -152,20 +166,14 @@ class SG1_Writer:
             # Data handle = 0 ALWAYS (I Think)
             packed_DATE_data_handle = struct.pack('>i', 0)
             self.file.write(packed_DATE_data_handle)
-            """ STORE DATA """
-            entry_data_offset += 28
-            # Go To where the data is supposed to be stored
-            self.seek(date_data_offset)
-            year = struct.pack('>h', 2016)
-            self.file.write(year)
-            month = struct.pack('B', 11)
-            self.file.write(month)
-            day = struct.pack('B', 17)
-            self.file.write(day)
-            self.seek(entry_data_offset)
 
         """RUNT / time (entry 8 and 9)"""
-        TIME_data_offset = 201326592
+        """
+        RUNT 1 = Run Start Time
+        RUNT 2 = Run Stop Time
+        """
+        # time_data_offset = 201326592
+        time_data_offset = 271132672
         for time in range(2):
             # Name
             self.write_entry_name('R', 'U', 'N', 'T')
@@ -181,21 +189,9 @@ class SG1_Writer:
             # for dye, the data size is 2
             self.file.write(struct.pack('>i', 4))
             # DATE offset
-            self.file.write(struct.pack('>i', TIME_data_offset))
+            self.file.write(struct.pack('>i', time_data_offset))
             # Data handle = 0 ALWAYS (I Think)
             self.file.write(struct.pack('>i', 0))
-            """ STORE DATA """
-            entry_data_offset += 28
-            self.seek(TIME_data_offset)
-            hour = struct.pack('B', 12)
-            self.file.write(hour)
-            minute = struct.pack('B', 0)
-            self.file.write(minute)
-            seconds = struct.pack('B', 0)
-            self.file.write(seconds)
-            microseconds = struct.pack('B', 0)
-            self.file.write(microseconds)
-            self.seek(entry_data_offset)
 
     # Properly close the files.
     def close(self):

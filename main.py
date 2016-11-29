@@ -5,7 +5,7 @@ import os
 # import matplotlib.pyplot as plt
 
 from ABIFReader import *
-from SG1_Reader import *
+from SG1_Reader import SG1_Reader
 from SG1_Writer import *
 from os.path import isdir, isfile, join
 
@@ -98,6 +98,9 @@ if __name__ == "__main__":
     SG1_Writer(directory_sg_out, list_of_list)
     SG1_reader = SG1_Reader(directory_sg_out)
     a = SG1_reader.storeEntries()
+    Dye1 = SG1_reader.getData('Dye#', 1)
+    DATE1 = SG1_reader.getData('RUND', 1)
+    TIME1 = SG1_reader.getData('RUNT', 1)
     print "a"
 
     """
@@ -121,13 +124,14 @@ if __name__ == "__main__":
     #         SG1_2_reader.getData('TRAC', 4), SG1_2_reader.getData('TRAC', 105)]
     # data3 = [SG1_3_reader.getData('TRAC', 1), SG1_3_reader.getData('TRAC', 2), SG1_3_reader.getData('TRAC', 3),
     #         SG1_3_reader.getData('TRAC', 4), SG1_3_reader.getData('TRAC', 105)]
-    # one = SG1_reader.getData('TRAC', 1)
-    # two = SG1_reader.getData('TRAC', 2)
-    # Dye_num = SG1_reader.getData('Dye#', 1)
-    # DATE1 = SG1_reader.getData('RUND', 1)
-    # DATE2 = SG1_reader.getData('RUND', 2)
-    # TIME1 = SG1_reader.getData('RUNT', 1)
-    # TIME2 = SG1_reader.getData('RUNT', 2)
+    # # one = SG1_reader.getData('TRAC', 1)
+    # # two = SG1_reader.getData('TRAC', 2)
+    # # Dye_num = SG1_reader.getData('Dye#', 1)
+    # DATE1 = SG1_1_reader.getData('RUND', 1)
+    # DATE2 = SG1_3_reader.getData('RUND', 1)
+    # TIME1 = SG1_1_reader.getData('RUNT', 1)
+    # TIME2 = SG1_3_reader.getData('RUNT', 1)
+    print "a"
     # a = pd.DataFrame(data)
     # a.to_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv')
     # for i in data:

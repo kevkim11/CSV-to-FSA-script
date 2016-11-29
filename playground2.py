@@ -1,21 +1,12 @@
-import struct
-import binascii
+from datetime import datetime
 
-# values = (1, 'ab', 2.7)
-# s = struct.Struct('I 2s f')
-# packed_data = s.pack(*values)
-
-# print 'Original values:', values
-# print 'Format string  :', s.format
-# print 'Uses           :', s.size, 'bytes'
-# print 'Packed Value   :', binascii.hexlify(packed_data)
-
-####################################################################
-
-# packed_data = binascii.unhexlify('0100000061620000cdcc2c40')
-#
-# s = struct.Struct('I 2s f')
-# unpacked_data = s.unpack(packed_data)
-# print 'Unpacked Values:', unpacked_data
-for i in range(2):
-    print i
+todays_date_and_time = str(datetime.today())
+date_and_time_list = todays_date_and_time.split()
+date_list_str = date_and_time_list[0].split('-')
+date_list_int = [int(x) for x in date_list_str]
+time_list_str = date_and_time_list[1].split(':')
+time_list_int = [float(x) for x in time_list_str]
+print date_list_str
+print time_list_str
+print date_list_int
+print time_list_int

@@ -43,6 +43,8 @@ class SG1_Reader:
     def showEntries(self):
         for e in self.entries:
             print e
+
+
     def storeEntries(self):
         """
         Custom method I made in order to better visualize the entries data.
