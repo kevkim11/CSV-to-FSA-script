@@ -17,7 +17,7 @@ class SG1_Writer:
     Has similar structure to that of an FSA file.
     """
     def write_header_type(self):
-        logging.info('Started header')
+        # logging.info('Started header')
         packed_S = struct.pack('c', 'S') # 0
         packed_G = struct.pack('c', 'G') # 1
         packed_1 = struct.pack('c', '1') # 2
@@ -25,10 +25,10 @@ class SG1_Writer:
         l = [packed_S, packed_G, packed_1, packed_F]
         for i in l:
             self.file.write(i)
-        logging.info('Finished header')
+        # logging.info('Finished header')
 
     def write_entry_name(self, a, b, c, d):
-        logging.info('write_entry_name started for %s', ''.join([a, b, c, d]))
+        # logging.info('write_entry_name started for %s', ''.join([a, b, c, d]))
         packed_1_char = struct.pack('c', a)
         packed_2_char = struct.pack('c', b)
         packed_3_char = struct.pack('c', c)
@@ -43,17 +43,17 @@ class SG1_Writer:
         :param numerator:
         :return:
         """
-        logging.info('Started recommended_ratio')
+        # logging.info('Started recommended_ratio')
         new_list_of_list = []
         for list in list_list:
             new_list_of_list.append(max(list))
         denominator = max(new_list_of_list)
         if denominator > numerator:
-            logging.info('Finished recommended_ratio')
-            logging.info('recommended_ratio = ' + str(numerator/denominator))
+            # logging.info('Finished recommended_ratio')
+            # logging.info('recommended_ratio = ' + str(numerator/denominator))
             return numerator/denominator
         else:
-            logging.info('recommended_ratio = 1')
+            # logging.info('recommended_ratio = 1')
             return 1
 
 
@@ -152,7 +152,7 @@ class SG1_Writer:
             data_data_offset += data_size
             self.seek(entry_data_offset)
 
-        logging.info("Dye# (entry 5")
+        logging.info("Dye# (entry 5)")
         dye_data_offset = 327680 # 5
         # dye_data_offset = 327688  # 5
         # Name
@@ -182,18 +182,13 @@ class SG1_Writer:
         time_list_int = [float(x) for x in time_list_str]
         """
 
-        """RUND / date (entry 6 and 7)"""
-        """
-        RUND 1 = Run Start Date
-        RUND 2 = Run Stop Date
-        """
         # DATE_dataoffsetpos = 70626
         # date_data_offset = 132123409 # = 2016-11-17
         # date_data_offset = 132123414 # = 2016-11-22
         date_data_offset = 132123420  # = 2016-11-28
+        logging.info('RUND / date (entry 6 and 7)')
         for date in range(1,3):
-            logging.info("Dye# (entry 5")
-            dataoffsetpos9 = self.tell()
+            logging.info("RUND"+str(date))
             # Name
             self.write_entry_name('R', 'U', 'N', 'D')
             # Number (do a for loop and put i)
@@ -221,8 +216,10 @@ class SG1_Writer:
         """
         # time_data_offset = 201326592
         time_data_offset = 271132672
+        logging.info('RUNT / time (entry 8 and 9)')
         for time in range(1,3):
             # Name
+            logging.info("RUNT" + str(time))
             self.write_entry_name('R', 'U', 'N', 'T')
             # Number
             self.file.write(struct.pack('>i', time))
