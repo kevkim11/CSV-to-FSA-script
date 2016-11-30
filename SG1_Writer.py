@@ -49,7 +49,7 @@ class SG1_Writer:
         denominator = max(new_list_of_list)
         if denominator > numerator:
             logging.info('Finished recommended_ratio')
-            logging.info('recommended_ratio = '+numerator/denominator)
+            logging.info('recommended_ratio = ' + str(numerator/denominator))
             return numerator/denominator
         else:
             logging.info('recommended_ratio = 1')
@@ -63,17 +63,22 @@ class SG1_Writer:
         :param ratio:
         :return:
         """
-        flu2 = []
-        joe2 = []
-        tmr2 = []
-        cxr2 = []
-        wen2 = []
-        [flu2.append(i * ratio) for i in list_list_dyes[0]]
-        [joe2.append(i * ratio) for i in list_list_dyes[1]]
-        [tmr2.append(i * ratio) for i in list_list_dyes[2]]
-        [cxr2.append(i * ratio) for i in list_list_dyes[3]]
-        [wen2.append(i * ratio) for i in list_list_dyes[4]]
-        return [flu2, joe2, tmr2, cxr2, wen2]
+        # flu2 = []
+        # joe2 = []
+        # tmr2 = []
+        # cxr2 = []
+        # wen2 = []
+        # [flu2.append(i * ratio) for i in list_list_dyes[0]]
+        # [joe2.append(i * ratio) for i in list_list_dyes[1]]
+        # [tmr2.append(i * ratio) for i in list_list_dyes[2]]
+        # [cxr2.append(i * ratio) for i in list_list_dyes[3]]
+        # [wen2.append(i * ratio) for i in list_list_dyes[4]]
+        new_list_of_list = []
+        for list in list_list_dyes:
+            new_list = []
+            [new_list.append(i * ratio) for i in list]
+            new_list_of_list.append(new_list)
+        return new_list_of_list
 
 
     def __init__(self, fn, list_of_list):
