@@ -17,24 +17,12 @@ class SG1_Writer:
     Has similar structure to that of an FSA file.
     """
     def write_header_type(self):
-        # logging.info('Started header')
-        packed_S = struct.pack('c', 'S') # 0
-        packed_G = struct.pack('c', 'G') # 1
-        packed_1 = struct.pack('c', '1') # 2
-        packed_F = struct.pack('c', 'F') # 3
-        l = [packed_S, packed_G, packed_1, packed_F]
-        for i in l:
-            self.file.write(i)
-        # logging.info('Finished header')
+        self.write_entry_name('S', 'G', '1', 'F')
 
     def write_entry_name(self, a, b, c, d):
         # logging.info('write_entry_name started for %s', ''.join([a, b, c, d]))
-        packed_1_char = struct.pack('c', a)
-        packed_2_char = struct.pack('c', b)
-        packed_3_char = struct.pack('c', c)
-        packed_4_char = struct.pack('c', d)
-        for packed_char in [packed_1_char, packed_2_char, packed_3_char, packed_4_char]:
-            self.file.write(packed_char)
+        for letter in [a, b, c, d]:
+            self.file.write(struct.pack('c', letter))
 
     def recommended_ratio(self, list_list, numerator):
         """
