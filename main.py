@@ -95,7 +95,7 @@ if __name__ == "__main__":
     Write
     """
 
-    # SG1_Writer(directory_sg_out, list_of_list)
+    SG1_Writer(directory_sg_out, list_of_list)
     SG1_reader = SG1_Reader(directory_sg_out)
     a = SG1_reader.storeEntries()
     Dye1 = SG1_reader.getData('Dye#', 1)

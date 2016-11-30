@@ -7,8 +7,9 @@ import logging
 from datetime import datetime
 
 #TODO datetime
-
-logging.basicConfig(level=logging.INFO)
+""" Loggers """
+FORMAT = '%(levelname)s:%(funcName)s:%(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO)
 
 class SG1_Writer:
     """
@@ -63,16 +64,6 @@ class SG1_Writer:
         :param ratio:
         :return:
         """
-        # flu2 = []
-        # joe2 = []
-        # tmr2 = []
-        # cxr2 = []
-        # wen2 = []
-        # [flu2.append(i * ratio) for i in list_list_dyes[0]]
-        # [joe2.append(i * ratio) for i in list_list_dyes[1]]
-        # [tmr2.append(i * ratio) for i in list_list_dyes[2]]
-        # [cxr2.append(i * ratio) for i in list_list_dyes[3]]
-        # [wen2.append(i * ratio) for i in list_list_dyes[4]]
         new_list_of_list = []
         for list in list_list_dyes:
             new_list = []
@@ -88,18 +79,19 @@ class SG1_Writer:
         :param list_of_list: - list of list containing the values for joe, flu, tmr, cxr, and wen.
         """
 
-        """Variables"""
+        logging.info("Variables")
         self.filename = fn
         self.file = open(fn, 'wb')
         self.time_made = datetime.now()
         numerator = 32767 # The biggest value that a short can go to.
 
-        """Header"""
+        logging.info("Header")
         self.write_header_type() # 0-3 (4 bytes)
-        """Version"""
+
+        logging.info("Version")
         self.file.write(struct.pack('>h', 101))  # 4, 5 (2 bytes)
 
-        """Directory Entry"""
+        logging.info("Directory Entry")
         entry_data_offset = 327400
         # Name
         self.write_entry_name('t', 'd', 'i', 'r')
@@ -122,14 +114,17 @@ class SG1_Writer:
         for it in range(47):
             self.file.write(struct.pack('>h', 0))
 
-        """Entries"""
+        logging.info("Entries")
         self.seek(entry_data_offset)
-        """Recommended Ratio"""
+
+        logging.info("Recommended Ratio")
         recommended_ratio = self.recommended_ratio(list_of_list, numerator)
         filtered_list_of_list = self.filtered_with_ratio(list_of_list, recommended_ratio)
+
         """TRAC/DATA (0-4 entries)"""
         data_data_offset = 128
         for TRAC_number, dye in itertools.izip([1, 2, 3, 4, 105], filtered_list_of_list):
+            logging.info("TRAC/DATA "+str(TRAC_number))
             # Iterating through a list of numbers that corresponds with the number variable.
             # Name
             self.write_entry_name('T', 'R', 'A', 'C')
@@ -157,7 +152,7 @@ class SG1_Writer:
             data_data_offset += data_size
             self.seek(entry_data_offset)
 
-        """Dye# (entry 5)"""
+        logging.info("Dye# (entry 5")
         dye_data_offset = 327680 # 5
         # dye_data_offset = 327688  # 5
         # Name
@@ -196,12 +191,13 @@ class SG1_Writer:
         # date_data_offset = 132123409 # = 2016-11-17
         # date_data_offset = 132123414 # = 2016-11-22
         date_data_offset = 132123420  # = 2016-11-28
-        for date in range(2):
+        for date in range(1,3):
+            logging.info("Dye# (entry 5")
             dataoffsetpos9 = self.tell()
             # Name
             self.write_entry_name('R', 'U', 'N', 'D')
             # Number (do a for loop and put i)
-            self.file.write(struct.pack('>i', date+1))
+            self.file.write(struct.pack('>i', date))
             # Element Type (Always 10 for DATE)
             self.file.write(struct.pack('>h', 10))
             # Element Size (Always 4 for DATE)
@@ -225,11 +221,11 @@ class SG1_Writer:
         """
         # time_data_offset = 201326592
         time_data_offset = 271132672
-        for time in range(2):
+        for time in range(1,3):
             # Name
             self.write_entry_name('R', 'U', 'N', 'T')
             # Number
-            self.file.write(struct.pack('>i', time+1))
+            self.file.write(struct.pack('>i', time))
             # Element Type (Always 10 for time)
             self.file.write(struct.pack('>h', 11))
             # Element Size (Always 4 for time)
