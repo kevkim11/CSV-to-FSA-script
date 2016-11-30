@@ -1,12 +1,14 @@
 # Author: Kevin Kim
 # Version: 1.0.1, November 2016
-
+from __future__ import division
 import struct
 import itertools
 import logging
 from datetime import datetime
 
-#TODO Need to use long instead of short ints
+#TODO datetime
+
+logging.basicConfig(level=logging.INFO)
 
 class SG1_Writer:
     """
@@ -33,6 +35,47 @@ class SG1_Writer:
         for packed_char in [packed_1_char, packed_2_char, packed_3_char, packed_4_char]:
             self.file.write(packed_char)
 
+    def recommended_ratio(self, list_list, numerator):
+        """
+
+        :param list_list:
+        :param numerator:
+        :return:
+        """
+        logging.info('Started recommended_ratio')
+        new_list_of_list = []
+        for list in list_list:
+            new_list_of_list.append(max(list))
+        denominator = max(new_list_of_list)
+        if denominator > numerator:
+            logging.info('Finished recommended_ratio')
+            logging.info('recommended_ratio = '+numerator/denominator)
+            return numerator/denominator
+        else:
+            logging.info('recommended_ratio = 1')
+            return 1
+
+
+    def filtered_with_ratio(self, list_list_dyes, ratio):
+        """
+
+        :param list_list_dyes:
+        :param ratio:
+        :return:
+        """
+        flu2 = []
+        joe2 = []
+        tmr2 = []
+        cxr2 = []
+        wen2 = []
+        [flu2.append(i * ratio) for i in list_list_dyes[0]]
+        [joe2.append(i * ratio) for i in list_list_dyes[1]]
+        [tmr2.append(i * ratio) for i in list_list_dyes[2]]
+        [cxr2.append(i * ratio) for i in list_list_dyes[3]]
+        [wen2.append(i * ratio) for i in list_list_dyes[4]]
+        return [flu2, joe2, tmr2, cxr2, wen2]
+
+
     def __init__(self, fn, list_of_list):
         """
 
@@ -44,7 +87,7 @@ class SG1_Writer:
         self.filename = fn
         self.file = open(fn, 'wb')
         self.time_made = datetime.now()
-
+        numerator = 32767 # The biggest value that a short can go to.
 
         """Header"""
         self.write_header_type() # 0-3 (4 bytes)
@@ -76,9 +119,12 @@ class SG1_Writer:
 
         """Entries"""
         self.seek(entry_data_offset)
+        """Recommended Ratio"""
+        recommended_ratio = self.recommended_ratio(list_of_list, numerator)
+        filtered_list_of_list = self.filtered_with_ratio(list_of_list, recommended_ratio)
         """TRAC/DATA (0-4 entries)"""
         data_data_offset = 128
-        for TRAC_number, dye in itertools.izip([1, 2, 3, 4, 105], list_of_list):
+        for TRAC_number, dye in itertools.izip([1, 2, 3, 4, 105], filtered_list_of_list):
             # Iterating through a list of numbers that corresponds with the number variable.
             # Name
             self.write_entry_name('T', 'R', 'A', 'C')

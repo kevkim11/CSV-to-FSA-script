@@ -1,12 +1,24 @@
-from datetime import datetime
 
-todays_date_and_time = str(datetime.today())
-date_and_time_list = todays_date_and_time.split()
-date_list_str = date_and_time_list[0].split('-')
-date_list_int = [int(x) for x in date_list_str]
-time_list_str = date_and_time_list[1].split(':')
-time_list_int = [float(x) for x in time_list_str]
-print date_list_str
-print time_list_str
-print date_list_int
-print time_list_int
+
+import logging
+
+# logging.info('Started recommended_ratio')
+# new_list_of_list = []
+# for list in list_list:
+#     new_list_of_list.append(max(list))
+# denominator = max(new_list_of_list)
+denominator = 3
+numerator = 2
+
+logging.info('Finished recommended_ratio')
+if denominator > numerator:
+    logging.info('denominator = ' + str(denominator))
+    logging.info('denominator = ' + str(numerator))
+    logging.info('recommended_ratio = ' + str(numerator / denominator))
+    a = numerator / denominator
+    print "num is "
+    print a
+    print numerator / denominator
+else:
+    logging.info('recommended_ratio = 1')
+    print 1

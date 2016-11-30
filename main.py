@@ -95,14 +95,15 @@ if __name__ == "__main__":
     Write
     """
 
-    SG1_Writer(directory_sg_out, list_of_list)
+    # SG1_Writer(directory_sg_out, list_of_list)
     SG1_reader = SG1_Reader(directory_sg_out)
     a = SG1_reader.storeEntries()
     Dye1 = SG1_reader.getData('Dye#', 1)
     DATE1 = SG1_reader.getData('RUND', 1)
     TIME1 = SG1_reader.getData('RUNT', 1)
     print "a"
-
+    data1 = [SG1_reader.getData('TRAC', 1), SG1_reader.getData('TRAC', 2), SG1_reader.getData('TRAC', 3),
+            SG1_reader.getData('TRAC', 4), SG1_reader.getData('TRAC', 105)]
     """
     Read
     """
