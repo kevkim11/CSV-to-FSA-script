@@ -69,82 +69,94 @@ def plot_dyes(list_list_dyes, list_of_baseline_x = [], list_of_baseline_y = [], 
     legend = plt.legend(loc='upper left', fontsize='small')
     return plot
 
-if __name__ == "__main__":
-    #TODO Implement LOGGER (LOG FILES)
+def main():
     """
-    Variables
+    1) read_csv (just need to access the raw data somehow)
+    2) Get the 5 dyes
+    3) Write it as a FSA/SG1 binary file.
+        SG1_Writer class does this.
     """
-    # Directory variables
-    directory = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/Allelic ladder - 10-14-16-5-21 PM.fsa'
-    directory_sg = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/KevinTxtAllelicLadder.sg1'
-    directory_sg_out = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/output.sg1'
-    destination = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER'
-    name = 'Allelic ladder - 10-14-16-5-21 PM.fsa'
-
-    sg1_1 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/KevinTxtAllelicLadder.sg1'
-    sg1_2 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/310_converted_10_14_matrix.txt.sg1'
-    sg1_3 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/310_converted_11_9_Matrix_10mW.txt.sg1'
-
-    # Dataframe/list_to_list variable
     df = pd.read_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv', index_col=0)
-    # Contains a list of list of the dye values.
     list_of_list = df.values.tolist()
+    SG1_Writer('CSV FOLDER/output.sg1', list_of_list)
 
-    #######################
-    """
-    Write
-    """
 
-    SG1_Writer(directory_sg_out, list_of_list)
-    SG1_reader = SG1_Reader(directory_sg_out)
-    a = SG1_reader.storeEntries()
-    Dye1 = SG1_reader.getData('Dye#', 1)
-    DATE1 = SG1_reader.getData('RUND', 1)
-    TIME1 = SG1_reader.getData('RUNT', 1)
-    print "a"
-    data1 = [SG1_reader.getData('TRAC', 1), SG1_reader.getData('TRAC', 2), SG1_reader.getData('TRAC', 3),
-            SG1_reader.getData('TRAC', 4), SG1_reader.getData('TRAC', 105)]
-    """
-    Read
-    """
-    # SG1_1_reader = SG1_Reader(sg1_1)
-    # SG1_2_reader = SG1_Reader(sg1_2)
-    # SG1_3_reader = SG1_Reader(sg1_3)
-    # a = SG1_1_reader.storeEntries()
-    # b = SG1_2_reader.storeEntries()
-    # c = SG1_3_reader.storeEntries()
+if __name__ == "__main__":
+    main()
+    # """
+    # Variables
+    # """
+    # # Directory variables
+    # directory = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/Allelic ladder - 10-14-16-5-21 PM.fsa'
+    # directory_sg = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/KevinTxtAllelicLadder.sg1'
+    # directory_sg_out = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/output.sg1'
+    # destination = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER'
+    # name = 'Allelic ladder - 10-14-16-5-21 PM.fsa'
+    #
+    # sg1_1 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/KevinTxtAllelicLadder.sg1'
+    # sg1_2 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/310_converted_10_14_matrix.txt.sg1'
+    # sg1_3 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/310_converted_11_9_Matrix_10mW.txt.sg1'
+    #
+    # # Dataframe/list_to_list variable
+    # df = pd.read_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv', index_col=0)
+    # # Contains a list of list of the dye values.
+    # list_of_list = df.values.tolist()
+    #
+    # #######################
+    # """
+    # Write
+    # """
+    #
+    # SG1_Writer(directory_sg_out, list_of_list)
+    # SG1_reader = SG1_Reader(directory_sg_out)
+    # a = SG1_reader.storeEntries()
+    # Dye1 = SG1_reader.getData('Dye#', 1)
+    # DATE1 = SG1_reader.getData('RUND', 1)
+    # TIME1 = SG1_reader.getData('RUNT', 1)
     # print "a"
-    # # SG1_reader.showEntries()
+    # data1 = [SG1_reader.getData('TRAC', 1), SG1_reader.getData('TRAC', 2), SG1_reader.getData('TRAC', 3),
+    #         SG1_reader.getData('TRAC', 4), SG1_reader.getData('TRAC', 105)]
+    # """
+    # Read
+    # """
+    # # SG1_1_reader = SG1_Reader(sg1_1)
+    # # SG1_2_reader = SG1_Reader(sg1_2)
+    # # SG1_3_reader = SG1_Reader(sg1_3)
+    # # a = SG1_1_reader.storeEntries()
+    # # b = SG1_2_reader.storeEntries()
+    # # c = SG1_3_reader.storeEntries()
+    # # print "a"
+    # # # SG1_reader.showEntries()
+    # # #
+    # # # SG1_reader.storeEntries()
     # #
-    # # SG1_reader.storeEntries()
+    # #
+    # # data1 = [SG1_1_reader.getData('TRAC', 1), SG1_1_reader.getData('TRAC', 2), SG1_1_reader.getData('TRAC', 3),
+    # #         SG1_1_reader.getData('TRAC', 4), SG1_1_reader.getData('TRAC', 105)]
+    # # data2 = [SG1_2_reader.getData('TRAC', 1), SG1_2_reader.getData('TRAC', 2), SG1_2_reader.getData('TRAC', 3),
+    # #         SG1_2_reader.getData('TRAC', 4), SG1_2_reader.getData('TRAC', 105)]
+    # # data3 = [SG1_3_reader.getData('TRAC', 1), SG1_3_reader.getData('TRAC', 2), SG1_3_reader.getData('TRAC', 3),
+    # #         SG1_3_reader.getData('TRAC', 4), SG1_3_reader.getData('TRAC', 105)]
+    # # # one = SG1_reader.getData('TRAC', 1)
+    # # # two = SG1_reader.getData('TRAC', 2)
+    # # # Dye_num = SG1_reader.getData('Dye#', 1)
+    # # DATE1 = SG1_1_reader.getData('RUND', 1)
+    # # DATE2 = SG1_3_reader.getData('RUND', 1)
+    # # TIME1 = SG1_1_reader.getData('RUNT', 1)
+    # # TIME2 = SG1_3_reader.getData('RUNT', 1)
+    # print "a"
+    # # a = pd.DataFrame(data)
+    # # a.to_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv')
+    # # for i in data:
+    # #     print i
     #
+    # print "a"
+    # #
+    # # plot_dyes(data)
+    # # plt.show()
     #
-    # data1 = [SG1_1_reader.getData('TRAC', 1), SG1_1_reader.getData('TRAC', 2), SG1_1_reader.getData('TRAC', 3),
-    #         SG1_1_reader.getData('TRAC', 4), SG1_1_reader.getData('TRAC', 105)]
-    # data2 = [SG1_2_reader.getData('TRAC', 1), SG1_2_reader.getData('TRAC', 2), SG1_2_reader.getData('TRAC', 3),
-    #         SG1_2_reader.getData('TRAC', 4), SG1_2_reader.getData('TRAC', 105)]
-    # data3 = [SG1_3_reader.getData('TRAC', 1), SG1_3_reader.getData('TRAC', 2), SG1_3_reader.getData('TRAC', 3),
-    #         SG1_3_reader.getData('TRAC', 4), SG1_3_reader.getData('TRAC', 105)]
-    # # one = SG1_reader.getData('TRAC', 1)
-    # # two = SG1_reader.getData('TRAC', 2)
-    # # Dye_num = SG1_reader.getData('Dye#', 1)
-    # DATE1 = SG1_1_reader.getData('RUND', 1)
-    # DATE2 = SG1_3_reader.getData('RUND', 1)
-    # TIME1 = SG1_1_reader.getData('RUNT', 1)
-    # TIME2 = SG1_3_reader.getData('RUNT', 1)
-    print "a"
-    # a = pd.DataFrame(data)
-    # a.to_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv')
-    # for i in data:
-    #     print i
-
-    print "a"
+    # # with open(directory_sg_out, 'rb') as f:
+    # #     a = f.read(4)
+    # #     print a
     #
-    # plot_dyes(data)
-    # plt.show()
-
-    # with open(directory_sg_out, 'rb') as f:
-    #     a = f.read(4)
-    #     print a
-
-        # myArr = bytearray(f.read(4))
+    #     # myArr = bytearray(f.read(4))

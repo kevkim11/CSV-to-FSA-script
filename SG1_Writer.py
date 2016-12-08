@@ -7,6 +7,7 @@ import logging
 from datetime import datetime
 
 #TODO datetime
+#TODO Recommended Ratio
 """ Loggers """
 FORMAT = '%(levelname)s:%(funcName)s:%(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -17,6 +18,10 @@ class SG1_Writer:
     Has similar structure to that of an FSA file.
     """
     def write_header_type(self):
+        """
+        Write's the 'SG1F' header for the file
+        :return:
+        """
         self.write_entry_name('S', 'G', '1', 'F')
 
     def write_entry_name(self, a, b, c, d):
