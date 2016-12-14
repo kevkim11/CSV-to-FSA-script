@@ -69,19 +69,49 @@ class SG1_Writer:
     def month_to_offset(self, month):
         return month*256
 
+    def year_to_offset(self, year):
+        total_months = year*256
+        return self.month_to_offset(total_months)
+
     def date_to_offset(self, y, m, d):
         """
         Converts dates into data offset data that can be stored on to the RUND entry of the
         SG1 file
+
         :param y: int - year
         :param m: int - month
         :param d: int - day
         :return:
         """
-        two_thousand_16 = 132120576  # = 2016-0-0          / 0
-        year_converted = y - 2016
+        year_converted = self.year_to_offset(y)
         month_converted = self.month_to_offset(m)
-        return two_thousand_16 + year_converted + month_converted + d
+        return year_converted + month_converted + d
+
+    def seconds_to_offset(self, seconds):
+        return seconds*256
+
+    def minutes_to_offset(self, minutes):
+        total_seconds = minutes*256
+        return self.seconds_to_offset(total_seconds)
+
+    def hours_to_offset(self, hours):
+        total_minutes = hours*256
+        return self.minutes_to_offset(total_minutes)
+
+    def time_to_offset(self, hr, min, sec):
+        """
+        Converts time into time offset data that can be stored on to the RUNT entry of the
+        SG1 file
+
+        :param hr: int - hour
+        :param min: int - minute
+        :param sec: int - seconds
+        :return:
+        """
+        hours_converted = self.hours_to_offset(hr)
+        minutes_converted = self.minutes_to_offset(min)
+        seconds_converted = self.seconds_to_offset(sec)
+        return hours_converted+ minutes_converted + seconds_converted
 
 
     def __init__(self, fn, list_of_list):
@@ -95,9 +125,6 @@ class SG1_Writer:
         self.filename = fn
         self.file = open(fn, 'wb')
         self.time_made = datetime.today()
-        year = self.time_made.year
-        month = self.time_made.month
-        day = self.time_made.day
 
         numerator = 32767 # The biggest value that a short can go to.
 
@@ -188,45 +215,12 @@ class SG1_Writer:
         self.file.write(struct.pack('>i', dye_data_offset))
         # Data handle = 0 ALWAYS (I Think)
         self.file.write(struct.pack('>i', 0))
-        """
-        todays_date_and_time = str(datetime.today())
-        date_and_time_list = todays_date_and_time.split()
-        date_list_str = date_and_time_list[0].split('-')
-        date_list_int = [int(x) for x in date_list_str]
-        print date_list_int
-        time_list_str = date_and_time_list[1].split(':')
-        time_list_int = [float(x) for x in time_list_str]
-        """
 
-        # DATE_dataoffsetpos = 70626
-        # date_data_offset = 132120833  # = 2016-1-1          / 0
-        # date_data_offset = 132120863  # = 2016-1-31         / 30
-        # date_data_offset = 132121087  # = 2016-1-255        / 254
-        # date_data_offset = 132121088  # = 2016-2-0          / 255
-        # date_data_offset = 132121089  # = 2016-2-1          / 256
-        # date_data_offset = 132123391  # = 2016-10-255     /2558
-        # date_data_offset = 132123392 # = 2016-11-0        /2559
-        # date_data_offset = 132123393 # = 2016-11-01         /2560
-        # date_data_offset = 132123420  # = 2016-11-28        /2560 + 27
-        # date_data_offset = 132123647  # = 2016-11-255
-        # date_data_offset = 132123648  # = 2016-12-0
-        # date_data_offset = 132123649  # = 2016-12-01
-        # date_data_offset = 132123662  # = 2016-12-14
-        # date_data_offset = 132123903  # = 2016-12-255
-        # date_data_offset = 132123904  # = 2016-13-0
-        # date_data_offset = 132124159  # = 2016-13-255
-        # date_data_offset = 132124415  # = 2016-14-255
-        # date_data_offset = 132124416  # = 2016-15-0
-        # date_data_offset = 132146091  # = 2016-99-171
-        # date_data_offset = 132146175  # = 2016-99-255
-        # date_data_offset = 132146176  # = 2016-100-0
-        # date_data_offset = 132185701  # = 2016-254-101
-        # date_data_offset = 132185855  # = 2016-254-255
-        # date_data_offset = 132186110  # = 2016-255-254
-        # date_data_offset = 132186112  # = 2017-0-0
+        year = self.time_made.year
+        month = self.time_made.month
+        day = self.time_made.day
 
         date_data_offset = self.date_to_offset(year, month, day)
-        # date_data_offset = 132123662  # = 2016-12-14
         logging.info('RUND / date (entry 6 and 7)')
         for date in range(1,3):
             logging.info("RUND"+str(date))
@@ -255,8 +249,11 @@ class SG1_Writer:
         RUNT 1 = Run Start Time
         RUNT 2 = Run Stop Time
         """
-        # time_data_offset = 201326592
-        time_data_offset = 271132672
+        hour = self.time_made.hour
+        minute = self.time_made.minute
+        seconds = self.time_made.second
+
+        time_data_offset = self.time_to_offset(hour, minute, seconds)
         logging.info('RUNT / time (entry 8 and 9)')
         for time in range(1,3):
             # Name
