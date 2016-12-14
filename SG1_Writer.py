@@ -6,8 +6,10 @@ import itertools
 import logging
 from datetime import datetime
 
-#TODO datetime
+#TODO time
 #TODO Recommended Ratio
+
+
 """ Loggers """
 FORMAT = '%(levelname)s:%(funcName)s:%(message)s'
 logging.basicConfig(format=FORMAT, level=logging.INFO)
@@ -64,6 +66,23 @@ class SG1_Writer:
             new_list_of_list.append(new_list)
         return new_list_of_list
 
+    def month_to_offset(self, month):
+        return month*256
+
+    def date_to_offset(self, y, m, d):
+        """
+        Converts dates into data offset data that can be stored on to the RUND entry of the
+        SG1 file
+        :param y: int - year
+        :param m: int - month
+        :param d: int - day
+        :return:
+        """
+        two_thousand_16 = 132120576  # = 2016-0-0          / 0
+        year_converted = y - 2016
+        month_converted = self.month_to_offset(m)
+        return two_thousand_16 + year_converted + month_converted + d
+
 
     def __init__(self, fn, list_of_list):
         """
@@ -75,7 +94,11 @@ class SG1_Writer:
         logging.info("Variables")
         self.filename = fn
         self.file = open(fn, 'wb')
-        self.time_made = datetime.now()
+        self.time_made = datetime.today()
+        year = self.time_made.year
+        month = self.time_made.month
+        day = self.time_made.day
+
         numerator = 32767 # The biggest value that a short can go to.
 
         logging.info("Header")
@@ -176,9 +199,34 @@ class SG1_Writer:
         """
 
         # DATE_dataoffsetpos = 70626
-        # date_data_offset = 132123409 # = 2016-11-17
-        # date_data_offset = 132123414 # = 2016-11-22
-        date_data_offset = 132123420  # = 2016-11-28
+        # date_data_offset = 132120833  # = 2016-1-1          / 0
+        # date_data_offset = 132120863  # = 2016-1-31         / 30
+        # date_data_offset = 132121087  # = 2016-1-255        / 254
+        # date_data_offset = 132121088  # = 2016-2-0          / 255
+        # date_data_offset = 132121089  # = 2016-2-1          / 256
+        # date_data_offset = 132123391  # = 2016-10-255     /2558
+        # date_data_offset = 132123392 # = 2016-11-0        /2559
+        # date_data_offset = 132123393 # = 2016-11-01         /2560
+        # date_data_offset = 132123420  # = 2016-11-28        /2560 + 27
+        # date_data_offset = 132123647  # = 2016-11-255
+        # date_data_offset = 132123648  # = 2016-12-0
+        # date_data_offset = 132123649  # = 2016-12-01
+        # date_data_offset = 132123662  # = 2016-12-14
+        # date_data_offset = 132123903  # = 2016-12-255
+        # date_data_offset = 132123904  # = 2016-13-0
+        # date_data_offset = 132124159  # = 2016-13-255
+        # date_data_offset = 132124415  # = 2016-14-255
+        # date_data_offset = 132124416  # = 2016-15-0
+        # date_data_offset = 132146091  # = 2016-99-171
+        # date_data_offset = 132146175  # = 2016-99-255
+        # date_data_offset = 132146176  # = 2016-100-0
+        # date_data_offset = 132185701  # = 2016-254-101
+        # date_data_offset = 132185855  # = 2016-254-255
+        # date_data_offset = 132186110  # = 2016-255-254
+        # date_data_offset = 132186112  # = 2017-0-0
+
+        date_data_offset = self.date_to_offset(year, month, day)
+        # date_data_offset = 132123662  # = 2016-12-14
         logging.info('RUND / date (entry 6 and 7)')
         for date in range(1,3):
             logging.info("RUND"+str(date))

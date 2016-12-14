@@ -82,69 +82,74 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    # main()
+
+
+
     # """
     # Variables
     # """
     # # Directory variables
-    # directory = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/Allelic ladder - 10-14-16-5-21 PM.fsa'
-    # directory_sg = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/KevinTxtAllelicLadder.sg1'
-    # directory_sg_out = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/output.sg1'
-    # destination = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER'
-    # name = 'Allelic ladder - 10-14-16-5-21 PM.fsa'
+    directory = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/Allelic ladder - 10-14-16-5-21 PM.fsa'
+    directory_sg = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/KevinTxtAllelicLadder.sg1'
+    directory_sg_out = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/output.sg1'
+    destination = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER'
+    name = 'Allelic ladder - 10-14-16-5-21 PM.fsa'
     #
-    # sg1_1 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/KevinTxtAllelicLadder.sg1'
-    # sg1_2 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/310_converted_10_14_matrix.txt.sg1'
-    # sg1_3 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/310_converted_11_9_Matrix_10mW.txt.sg1'
+    sg1_1 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/KevinTxtAllelicLadder.sg1'
+    sg1_2 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/310_converted_10_14_matrix.txt.sg1'
+    sg1_3 = '/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/LONG_10_14_matrix.txt.sg1'
     #
     # # Dataframe/list_to_list variable
-    # df = pd.read_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv', index_col=0)
-    # # Contains a list of list of the dye values.
-    # list_of_list = df.values.tolist()
+    df = pd.read_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv', index_col=0)
+    # Contains a list of list of the dye values.
+    list_of_list = df.values.tolist()
     #
     # #######################
     # """
     # Write
     # """
     #
-    # SG1_Writer(directory_sg_out, list_of_list)
-    # SG1_reader = SG1_Reader(directory_sg_out)
-    # a = SG1_reader.storeEntries()
+    SG1_Writer(directory_sg_out, list_of_list)
+    SG1_reader = SG1_Reader(directory_sg_out)
+    a = SG1_reader.storeEntries()
     # Dye1 = SG1_reader.getData('Dye#', 1)
-    # DATE1 = SG1_reader.getData('RUND', 1)
-    # TIME1 = SG1_reader.getData('RUNT', 1)
-    # print "a"
+    DATE1 = SG1_reader.getData('RUND', 1)
+    TIME1 = SG1_reader.getData('RUNT', 1)
+    print "a"
     # data1 = [SG1_reader.getData('TRAC', 1), SG1_reader.getData('TRAC', 2), SG1_reader.getData('TRAC', 3),
     #         SG1_reader.getData('TRAC', 4), SG1_reader.getData('TRAC', 105)]
     # """
     # Read
     # """
-    # # SG1_1_reader = SG1_Reader(sg1_1)
-    # # SG1_2_reader = SG1_Reader(sg1_2)
-    # # SG1_3_reader = SG1_Reader(sg1_3)
-    # # a = SG1_1_reader.storeEntries()
-    # # b = SG1_2_reader.storeEntries()
-    # # c = SG1_3_reader.storeEntries()
-    # # print "a"
+    SG1_1_reader = SG1_Reader(sg1_1)
+    SG1_2_reader = SG1_Reader(sg1_2)
+    SG1_3_reader = SG1_Reader(sg1_3)
+    a = SG1_1_reader.storeEntries()
+    b = SG1_2_reader.storeEntries()
+    c = SG1_3_reader.storeEntries()
+    # print "a"
     # # # SG1_reader.showEntries()
     # # #
     # # # SG1_reader.storeEntries()
     # #
     # #
-    # # data1 = [SG1_1_reader.getData('TRAC', 1), SG1_1_reader.getData('TRAC', 2), SG1_1_reader.getData('TRAC', 3),
-    # #         SG1_1_reader.getData('TRAC', 4), SG1_1_reader.getData('TRAC', 105)]
+    # data1 = [SG1_1_reader.getData('TRAC', 1), SG1_1_reader.getData('TRAC', 2), SG1_1_reader.getData('TRAC', 3),
+    #         SG1_1_reader.getData('TRAC', 4), SG1_1_reader.getData('TRAC', 105)]
     # # data2 = [SG1_2_reader.getData('TRAC', 1), SG1_2_reader.getData('TRAC', 2), SG1_2_reader.getData('TRAC', 3),
     # #         SG1_2_reader.getData('TRAC', 4), SG1_2_reader.getData('TRAC', 105)]
-    # # data3 = [SG1_3_reader.getData('TRAC', 1), SG1_3_reader.getData('TRAC', 2), SG1_3_reader.getData('TRAC', 3),
-    # #         SG1_3_reader.getData('TRAC', 4), SG1_3_reader.getData('TRAC', 105)]
+    # data3 = [SG1_3_reader.getData('TRAC', 1), SG1_3_reader.getData('TRAC', 2), SG1_3_reader.getData('TRAC', 3),
+    #         SG1_3_reader.getData('TRAC', 4), SG1_3_reader.getData('TRAC', 105)]
     # # # one = SG1_reader.getData('TRAC', 1)
     # # # two = SG1_reader.getData('TRAC', 2)
     # # # Dye_num = SG1_reader.getData('Dye#', 1)
-    # # DATE1 = SG1_1_reader.getData('RUND', 1)
-    # # DATE2 = SG1_3_reader.getData('RUND', 1)
-    # # TIME1 = SG1_1_reader.getData('RUNT', 1)
-    # # TIME2 = SG1_3_reader.getData('RUNT', 1)
-    # print "a"
+    DATE1 = SG1_1_reader.getData('RUND', 1)
+    DATE3 = SG1_3_reader.getData('RUND', 1)
+    DATE2 = SG1_2_reader.getData('RUND', 1)
+    TIME2 = SG1_2_reader.getData('RUNT', 1)
+    TIME1 = SG1_1_reader.getData('RUNT', 1)
+    TIME3 = SG1_3_reader.getData('RUNT', 1)
+    print "a"
     # # a = pd.DataFrame(data)
     # # a.to_csv('/Users/kevkim/GitHub/CSV-to-FSA-script/CSV FOLDER/data_to_csv.csv')
     # # for i in data:

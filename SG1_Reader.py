@@ -14,7 +14,7 @@ class SG1_Reader:
     Has similar structure to that of an FSA file.
     """
     def __init__(self, fn):
-        # type: (object) -> object
+        # type (object) -> object
         self.filename = fn
         self.file = open(fn, 'rb')
         self.type = self.readNextString(4)
@@ -33,7 +33,8 @@ class SG1_Reader:
         entry = self.getEntry(name, num)
         if not entry:
             raise SystemExit("error: Entry '%s (%i)' not found in '%s'" % (name, num, self.filename))
-        self.seek(entry.mydataoffset()) # self.dataoffset
+        pos = entry.mydataoffset()
+        self.seek(pos) # self.dataoffset
         data = self.readData(entry.elementtype, entry.numelements)
         if data != NotImplemented and len(data) == 1:
             return data[0]
