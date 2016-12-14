@@ -1,18 +1,22 @@
-# Author: Kevin Kim
-# Version: 1.0.1, November 2016
+"""
+
+Author: Kevin Kim
+Date: November 2016
+Version: 1.0.1,
+
+Can convert a list of list of data into a SG1 file that can be read in Gene Marker HD.
+
+"""
 from __future__ import division
-import struct
+
 import itertools
 import logging
+import struct
 from datetime import datetime
-
-#TODO time
-#TODO Recommended Ratio
-
 
 """ Loggers """
 FORMAT = '%(levelname)s:%(funcName)s:%(message)s'
-logging.basicConfig(format=FORMAT, level=logging.INFO)
+# logging.basicConfig(format=FORMAT, level=logging.INFO)
 
 class SG1_Writer:
     """
@@ -111,7 +115,7 @@ class SG1_Writer:
         hours_converted = self.hours_to_offset(hr)
         minutes_converted = self.minutes_to_offset(min)
         seconds_converted = self.seconds_to_offset(sec)
-        return hours_converted+ minutes_converted + seconds_converted
+        return hours_converted + minutes_converted + seconds_converted
 
 
     def __init__(self, fn, list_of_list):
@@ -215,6 +219,12 @@ class SG1_Writer:
         self.file.write(struct.pack('>i', dye_data_offset))
         # Data handle = 0 ALWAYS (I Think)
         self.file.write(struct.pack('>i', 0))
+
+        """RUND / date (entry 6 and 7)"""
+        """
+        RUND 1 = Run Start Date
+        RUND 2 = Run Stop Date
+        """
 
         year = self.time_made.year
         month = self.time_made.month
