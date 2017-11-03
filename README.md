@@ -17,3 +17,5 @@ and writes the values to a .sg1 file format.
 specifically GeneMarker HID.
 
 This project was based on https://github.com/fran6w/ABIFReader
+
+Please read the ABIF_File_Format.pdf for more info.
