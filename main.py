@@ -2,7 +2,7 @@ import csv
 import sys
 import os
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 
 from ABIFReader import *
 from SG1_Reader import SG1_Reader
@@ -83,9 +83,6 @@ def main():
 
 if __name__ == "__main__":
     # main()
-
-
-
     # """
     # Variables
     # """
